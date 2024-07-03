@@ -306,6 +306,29 @@ public class Main {
   }
 
   /**
+   * Get a random minter of genesis block based on mining power.
+   *
+   * @return the node that will mint the genesis block
+   */
+  public static Node getGenesisMinter() {
+    int totalMiningPower = 0;
+    for (Node node : getSimulatedNodes()) {
+      totalMiningPower += node.getMiningPower();
+    }
+
+    int randomValue = random.nextInt(totalMiningPower);
+    int cumulativeMiningPower = 0;
+
+    for (Node node : getSimulatedNodes()) {
+      cumulativeMiningPower += node.getMiningPower();
+      if (randomValue < cumulativeMiningPower) {
+        return node;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Construct network with the provided number of nodes.
    *
    * @param numNodes the num nodes
@@ -358,9 +381,8 @@ public class Main {
       node.joinNetwork();
     }
 
-    // Designates a random node (nodes in list are randomized) to mint the genesis
-    // block
-    getSimulatedNodes().get(0).genesisBlock();
+    // Select node based on mining power to mint the genesis block
+    getGenesisMinter().genesisBlock();
   }
 
   /**
