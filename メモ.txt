@@ -1,0 +1,40 @@
+変更パラメータ
+    - 既存のsimblockパラメータ
+        - NetworkConfiguration.java
+            - Region distribution(地域分布)：REGION_DISTRIBUTION = REGION_DISTRIBUTION_ETHEREUM_2025
+        - SimulationConfiguration.java
+            - block Time(ブロック生成時間)：INTERVAL = 1000 * 12
+            - block size：BLOCK_SIZE = 100000
+
+変更の検討中パラメータ
+    - 既存のsimblockパラメータ
+        - NetworkConfiguration.java
+            - DEGREE_DISTRIBUTION（アウトバウンドリンク数）
+                - 各ノードの接続数を決めるパラメータ
+                - "Discovering bitcoin's public topology and influential nodes"参照
+            - LATENCY
+                - 地域間の平均レイテンシを表す2次元配列
+            - DOWNLOAD_BANDWIDTH
+                - 各地域の受信帯域をまとめた配列　単位はbit
+            - UPLOAD_BANDWIDTH
+                - 各地域の送信帯域をまとめた配列　単位はbit
+        - SimulationConfiguration.java
+            - NUM_OF_NODES
+                - 参加するノード数
+            - ALGO
+                - コンセンサスアルゴリズムの指定
+                - 現在はPoW
+            - AVERAGE_MINING_POWER
+                - 各ノードの平均マイニングパワー
+            - STDEV_OF_MINING_POWER
+                - ノードのマイニングパワーを決める際の標準偏差
+            - AVERAGE_COINS (PoSを再現する場合)
+                - 各ノードの平均保有コイン
+            - STDEV_OF_COINS (PoSを再現する場合)
+                - ノードの保有コインの標準偏差
+            - STAKING_REWARD (PoSを再現する場合)
+                - 報酬率を表す
+            - CBR_USAGE_RATE
+                - コンパクトブロックリプレイ(CRB)プロトコルを使用するノードの割合
+            - COMPACT_BLOCK_SIZE
+                - CBRを利用する際のコンパックとブロックのサイズ
