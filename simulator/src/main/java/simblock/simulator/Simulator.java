@@ -100,10 +100,6 @@ public class Simulator {
   /** A list of observed {@link Block} instances. */
   private static final ArrayList<Block> observedBlocks = new ArrayList<>();
 
-
-  /** Recorded block approval times in milliseconds. */
-  private static final ArrayList<Long> approvalTimes = new ArrayList<>();
-
   /**
    * A list of observed block propagation times. The map key represents the id of the node that has
    * seen the block, the value represents the difference between the current time and the block
@@ -177,23 +173,5 @@ public class Simulator {
     for (int i = 0; i < observedBlocks.size(); i++) {
       printPropagation(observedBlocks.get(i), observedPropagations.get(i));
     }
-  }
-
-  /**
-   * Get the average block approval time across all observed blocks.
-   *
-   * @return the average propagation time in milliseconds
-   */
-  public static long getAverageApprovalTime() {
-    long sum = 0;
-    for (long t : approvalTimes) {
-      sum += t;
-    }
-    return approvalTimes.size() > 0 ? sum / approvalTimes.size() : 0;
-  }
-
-  /** Record a measured block approval time. */
-  public static void recordApprovalTime(long time) {
-    approvalTimes.add(time);
   }
 }
