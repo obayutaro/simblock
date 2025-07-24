@@ -26,6 +26,7 @@ import static simblock.simulator.Main.OUT_JSON_FILE;
 import static simblock.simulator.Main.random;
 import static simblock.simulator.Network.getBandwidth;
 import static simblock.simulator.Simulator.arriveBlock;
+import static simblock.simulator.Simulator.recordApprovalTime;
 import static simblock.simulator.Timer.getCurrentTime;
 import static simblock.simulator.Timer.putTask;
 import static simblock.simulator.Timer.removeTask;
@@ -43,6 +44,7 @@ import simblock.task.CmpctBlockMessageTask;
 import simblock.task.GetBlockTxnMessageTask;
 import simblock.task.InvMessageTask;
 import simblock.task.RecMessageTask;
+import simblock.task.BlockApprovalTask;
 
 /** A class representing a node in the network. */
 public class Node {
@@ -87,6 +89,15 @@ public class Node {
 
   /** Processing time of tasks expressed in milliseconds. */
   private final long processingTime = 2;
+
+  /**
+   * Get the block approval processing time.
+   *
+   * @return processing time in milliseconds
+   */
+  public long getProcessingTime() {
+    return this.processingTime;
+  }
 
   /**
    * Instantiates a new Node.
@@ -290,6 +301,22 @@ public class Node {
   }
 
   /**
+   * Complete validation and approve the given block.
+   *
+   * @param newBlock the block to approve
+   * @param startTime when validation started
+   */
+  public void approveBlock(Block newBlock, long startTime) {
+    if (this.block != null && !this.block.isOnSameChainAs(newBlock)) {
+      this.addOrphans(this.block, newBlock);
+    }
+    this.addToChain(newBlock);
+    this.minting();
+    this.sendInv(newBlock);
+    recordApprovalTime(getCurrentTime() - startTime);
+  }
+
+  /**
    * Add orphans.
    *
    * @param orphanBlock the orphan block
@@ -338,16 +365,8 @@ public class Node {
    */
   public void receiveBlock(Block block) {
     if (this.consensusAlgo.isReceivedBlockValid(block, this.block)) {
-      if (this.block != null && !this.block.isOnSameChainAs(block)) {
-        // If orphan mark orphan
-        this.addOrphans(this.block, block);
-      }
-      // Else add to canonical chain
-      this.addToChain(block);
-      // Generates a new minting task
-      this.minting();
-      // Advertise received block
-      this.sendInv(block);
+      BlockApprovalTask task = new BlockApprovalTask(this, block);
+      putTask(task);
     } else if (!this.orphans.contains(block) && !block.isOnSameChainAs(this.block)) {
       // TODO better understand - what if orphan is not valid?
       // If the block was not valid but was an unknown orphan and is not on the same
