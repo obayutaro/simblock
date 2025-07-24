@@ -223,7 +223,7 @@ public class Main {
     OUT_JSON_FILE.close();
 
     // Output average block approval time across all nodes
-    long avgApproval = Simulator.getAverageApprovalTime();
+    double avgApproval = Simulator.getAverageApprovalTime();
     System.out.println("AverageApprovalTime:" + avgApproval);
 
     long end = System.currentTimeMillis();

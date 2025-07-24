@@ -184,12 +184,12 @@ public class Simulator {
    *
    * @return the average propagation time in milliseconds
    */
-  public static long getAverageApprovalTime() {
+  public static double getAverageApprovalTime() {
     long sum = 0;
     for (long t : approvalTimes) {
       sum += t;
     }
-    return approvalTimes.size() > 0 ? sum / approvalTimes.size() : 0;
+    return approvalTimes.size() > 0 ? (double) sum / approvalTimes.size() / 1000.0 : 0.0;
   }
 
   /** Record a measured block approval time. */
