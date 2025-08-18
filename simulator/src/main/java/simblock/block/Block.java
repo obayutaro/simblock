@@ -16,6 +16,9 @@
 
 package simblock.block;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import simblock.node.Node;
 
 /** The representation of a block. */
@@ -37,6 +40,11 @@ public class Block {
 
   /** Latest known block id. */
   private static int latestId = 0;
+
+  /**
+   * List of transactions contained in this block. SimBlock 本家には Tx の概念が無いが，Forerunner モデル化のために追加。
+   */
+  private final List<Transaction> txList = new ArrayList<>();
 
   /**
    * Instantiates a new Block.
@@ -100,6 +108,34 @@ public class Block {
   // TODO what format
   public int getId() {
     return this.id;
+  }
+
+  /**
+   * Convenience alias for simulations that expect a long‐typed "index" (compatible with Forerunner
+   * code). Internally heightと同じ。
+   *
+   * @return the block index (height as long)
+   */
+  public long getIndex() {
+    return this.height;
+  }
+
+  /**
+   * Adds a transaction to this block.
+   *
+   * @param tx the transaction to add
+   */
+  public void addTransaction(Transaction tx) {
+    this.txList.add(tx);
+  }
+
+  /**
+   * Returns an unmodifiable view of the transaction list.
+   *
+   * @return immutable list of transactions
+   */
+  public List<Transaction> getTxList() {
+    return Collections.unmodifiableList(this.txList);
   }
 
   /**

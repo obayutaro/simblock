@@ -1,0 +1,12 @@
+0   JP     90000     120       FORERUNNER fcPerfect=0.88;fcImperfect=0.11
+1   JP     90000     120       FORERUNNER 
+2   JP     90000     120       DEFAULT
+3   JP     90000     120       DEFAULT
+
+4   US     70000     180       FORERUNNER fcPerfect=0.85;fcImperfect=0.13
+5   US     70000     180       DEFAULT
+6   US     70000     180       DEFAULT
+
+7   EU     80000     160       FORERUNNER fcPerfect=0.90;fcImperfect=0.09;txBaseCost=80
+8   EU     80000     160       DEFAULT
+9   EU     80000     160       DEFAULT

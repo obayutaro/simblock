@@ -20,7 +20,7 @@ package simblock.settings;
 public class SimulationConfiguration {
   /** The number of nodes participating in the blockchain network. */
   // TODO revert
-  public static final int NUM_OF_NODES = 300; // 600;//800;//6000;
+  public static final int NUM_OF_NODES = 600; // 600;//800;//6000;
   // public static final int NUM_OF_NODES = 600;//600;//800;//6000;
 
   /** The kind of routing table. */
@@ -67,14 +67,14 @@ public class SimulationConfiguration {
 
   /** Block size. (unit: byte). */
   // public static final long BLOCK_SIZE = 535000; // 6110;//8000;//535000;//0.5MB
-  public static final long BLOCK_SIZE = 100000; // Ethereum平均ブロックサイズに変更 oba
+  public static final long BLOCK_SIZE = 100 * 1024; // Ethereum平均ブロックサイズに変更 oba
 
   /** The usage rate of compact block relay (CBR) protocol. */
   public static final float CBR_USAGE_RATE = 0;
   /** The rate of nodes that cause churn. */
   public static final float CHURN_NODE_RATE = 0.976f;
   /** Compact block size. (unit: byte) */
-  public static final long COMPACT_BLOCK_SIZE = 18 * 1000; // 18KB
+  public static final long COMPACT_BLOCK_SIZE = 0; // 18KB
   /** CBR failure rate for a node that always connect network. */
   public static final float CBR_FAILURE_RATE_FOR_CONTROL_NODE = 0.13f;
   /** CBR failure rate for a node that causes churn. */
