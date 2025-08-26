@@ -50,7 +50,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import simblock.block.Block;
+import simblock.node.ForerunnerNode;
 import simblock.node.Node;
+import simblock.settings.ForerunnerConfig;
 import simblock.task.AbstractMintingTask;
 
 /** The type Main represents the entry point. */
@@ -143,10 +145,30 @@ public class Main {
     // TODO logger
     System.out.println();
 
+    // Check if simulation completed successfully
+    if (getSimulatedNodes().isEmpty()) {
+      System.err.println("Simulation failed: No nodes available for analysis.");
+      return;
+    }
+
     Set<Block> blocks = new HashSet<>();
 
-    // Get the latest block from the first simulated node
-    Block block = getSimulatedNodes().get(0).getBlock();
+    // Get the latest block from any simulated node that has one
+    Block seedBlock = null;
+    for (Node n : getSimulatedNodes()) {
+      Block nb = n.getBlock();
+      if (nb != null) {
+        if (seedBlock == null || Long.compare(nb.getTime(), seedBlock.getTime()) > 0) {
+          seedBlock = nb;
+        }
+      }
+    }
+    if (seedBlock == null) {
+      System.err.println(
+          "Error: No node has a block yet. Simulation may have terminated before propagation.");
+      return;
+    }
+    Block block = seedBlock;
 
     // Update the list of known blocks by adding the parents of the aforementioned
     // block
@@ -172,7 +194,7 @@ public class Main {
     // Sort the blocks first by time, then by hash code
     blockList.sort(
         (a, b) -> {
-          int order = Long.signum(a.getTime() - b.getTime());
+          int order = Long.compare(a.getTime(), b.getTime());
           if (order != 0) {
             return order;
           }
@@ -311,9 +333,20 @@ public class Main {
    * @return the node that will mint the genesis block
    */
   public static Node getGenesisMinter() {
+    if (getSimulatedNodes().isEmpty()) {
+      System.err.println("Error: No simulated nodes available for genesis minter selection.");
+      return null;
+    }
+
     long totalMiningPower = 0;
     for (Node node : getSimulatedNodes()) {
       totalMiningPower += node.getMiningPower();
+    }
+
+    if (totalMiningPower <= 0) {
+      System.err.println(
+          "Error: Total mining power is zero or negative. Cannot select genesis minter.");
+      return null;
     }
 
     long randomValue = (long) (random.nextDouble() * totalMiningPower);
@@ -352,16 +385,30 @@ public class Main {
     for (int id = 1; id <= numNodes; id++) {
       // Each node gets assigned a region, its degree, mining power, routing table and
       // consensus algorithm
-      Node node =
-          new Node(
-              id,
-              degreeList.get(id - 1) + 1,
-              regionList.get(id - 1),
-              genMiningPower(),
-              TABLE,
-              ALGO,
-              useCBRNodes.get(id - 1),
-              churnNodes.get(id - 1));
+      Node node;
+      if (ForerunnerConfig.isForerunnerNode(id)) {
+        node =
+            new ForerunnerNode( // ★追加
+                id,
+                degreeList.get(id - 1) + 1,
+                regionList.get(id - 1),
+                genMiningPower(),
+                TABLE,
+                ALGO,
+                useCBRNodes.get(id - 1),
+                churnNodes.get(id - 1));
+      } else {
+        node =
+            new Node( // 従来どおり
+                id,
+                degreeList.get(id - 1) + 1,
+                regionList.get(id - 1),
+                genMiningPower(),
+                TABLE,
+                ALGO,
+                useCBRNodes.get(id - 1),
+                churnNodes.get(id - 1));
+      }
       // Add the node to the list of simulated nodes
       addNode(node);
 
@@ -381,8 +428,32 @@ public class Main {
       node.joinNetwork();
     }
 
+    // Verify that nodes were created successfully
+    if (getSimulatedNodes().isEmpty()) {
+      System.err.println("Error: Failed to create any simulated nodes.");
+      return;
+    }
+
+    System.out.println("Successfully created " + getSimulatedNodes().size() + " nodes.");
+
     // Select node based on mining power to mint the genesis block
-    getGenesisMinter().genesisBlock();
+    Node genesisMinter = getGenesisMinter();
+    if (genesisMinter == null) {
+      System.err.println(
+          "Error: Failed to select genesis minter. No nodes available or all nodes have zero mining power.");
+      return;
+    }
+    genesisMinter.genesisBlock();
+
+    // Distribute genesis block to all nodes immediately to ensure consistent initial state
+    Block genesisBlock = genesisMinter.getBlock();
+    if (genesisBlock != null) {
+      for (Node node : getSimulatedNodes()) {
+        if (node != genesisMinter) {
+          node.receiveBlock(genesisBlock);
+        }
+      }
+    }
   }
 
   /**

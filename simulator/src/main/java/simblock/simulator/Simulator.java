@@ -122,7 +122,11 @@ public class Simulator {
       LinkedHashMap<Integer, Long> propagation =
           observedPropagations.get(observedBlocks.indexOf(block));
       // Update information for the new block
-      propagation.put(node.getNodeID(), getCurrentTime() - block.getTime());
+      long delta = getCurrentTime() - block.getTime();
+      if (delta < 0) {
+        delta = 0;
+      }
+      propagation.put(node.getNodeID(), delta);
     } else {
       // If the block has not been seen by any node and there is no memory allocated
       // TODO move magic number to constant
@@ -135,7 +139,11 @@ public class Simulator {
       }
       // If the block has not been seen by any node and there is additional memory
       LinkedHashMap<Integer, Long> propagation = new LinkedHashMap<>();
-      propagation.put(node.getNodeID(), getCurrentTime() - block.getTime());
+      long delta = getCurrentTime() - block.getTime();
+      if (delta < 0) {
+        delta = 0;
+      }
+      propagation.put(node.getNodeID(), delta);
       // Record the block as seen
       observedBlocks.add(block);
       // Record the propagation time

@@ -44,7 +44,8 @@ public class BlockMessageTask extends AbstractMessageTask {
   public BlockMessageTask(Node from, Node to, Block block, long delay) {
     super(from, to);
     this.block = block;
-    this.interval = getLatency(this.getFrom().getRegion(), this.getTo().getRegion()) + delay;
+    long raw = getLatency(this.getFrom().getRegion(), this.getTo().getRegion()) + delay;
+    this.interval = Math.max(1L, raw);
   }
 
   @Override

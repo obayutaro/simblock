@@ -47,7 +47,8 @@ public class Network {
     long mean = LATENCY[from][to];
     double shape = 0.2 * mean;
     double scale = mean - 5;
-    return Math.round(scale / Math.pow(random.nextDouble(), 1.0 / shape));
+    long v = Math.round(scale / Math.pow(random.nextDouble(), 1.0 / shape));
+    return Math.max(1L, v);
   }
 
   /**

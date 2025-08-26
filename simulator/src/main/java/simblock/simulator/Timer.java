@@ -86,7 +86,7 @@ public class Timer {
       if (this.equals(o)) {
         return 0;
       }
-      int order = Long.signum(this.scheduledTime - o.scheduledTime);
+      int order = Long.compare(this.scheduledTime, o.scheduledTime);
       if (order != 0) {
         return order;
       }

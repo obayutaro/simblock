@@ -20,7 +20,7 @@ package simblock.settings;
 public class SimulationConfiguration {
   /** The number of nodes participating in the blockchain network. */
   // TODO revert
-  public static final int NUM_OF_NODES = 600; // 600;//800;//6000;
+  public static final int NUM_OF_NODES = 1000; // Ethereumネットワーク規模に近づける
   // public static final int NUM_OF_NODES = 600;//600;//800;//6000;
 
   /** The kind of routing table. */
@@ -36,19 +36,19 @@ public class SimulationConfiguration {
    * adjusted by this value and the sum of mining power. (unit: millisecond)
    */
   // public static final long INTERVAL = 1000 * 60 * 10; // 1000*60;//1000*30*5;//1000*60*10;
-  public static final long INTERVAL = 1000 * 12; // Ethrereumようにブロック生成時間変更 oba
+  public static final long INTERVAL = 1000 * 13; // Ethereum平均ブロック時間（13秒）に調整
 
   /**
    * The average mining power of each node. Mining power corresponds to Hash Rate in Bitcoin, and is
    * the number of mining (hash calculation) executed per millisecond.
    */
-  public static final long AVERAGE_MINING_POWER = 400000;
+  public static final long AVERAGE_MINING_POWER = 800000; // Ethereumの実際のハッシュレートに近づける
 
   /**
    * The mining power of each node is determined randomly according to the normal distribution whose
    * average is AVERAGE_MINING_POWER and standard deviation is STDEV_OF_MINING_POWER.
    */
-  public static final long STDEV_OF_MINING_POWER = 100000;
+  public static final long STDEV_OF_MINING_POWER = 200000; // マイニングパワーの分散を調整
 
   /** The constant AVERAGE_COINS. */
   // TODO
@@ -63,11 +63,11 @@ public class SimulationConfiguration {
   /** The block height when a simulation ends. */
   // TODO revert
   // public static final int END_BLOCK_HEIGHT = 100;
-  public static final int END_BLOCK_HEIGHT = 3;
+  public static final int END_BLOCK_HEIGHT = 50; // より現実的な統計を得るため
 
   /** Block size. (unit: byte). */
   // public static final long BLOCK_SIZE = 535000; // 6110;//8000;//535000;//0.5MB
-  public static final long BLOCK_SIZE = 100 * 1024; // Ethereum平均ブロックサイズに変更 oba
+  public static final long BLOCK_SIZE = 50 * 1024; // Ethereum平均ブロックサイズ（50KB）に調整
 
   /** The usage rate of compact block relay (CBR) protocol. */
   public static final float CBR_USAGE_RATE = 0;

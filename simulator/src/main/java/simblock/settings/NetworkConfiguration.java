@@ -186,10 +186,16 @@ public class NetworkConfiguration {
     1.00, 1.00, 1.00, 1.0
   };
 
+  /** The cumulative distribution of number of outbound links for Ethereum. */
+  private static final double[] DEGREE_DISTRIBUTION_ETHEREUM = {
+    0.01, 0.02, 0.05, 0.10, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.82, 0.87, 0.91, 0.94, 0.96,
+    0.97, 0.98, 0.99, 1.0
+  };
+
   /**
    * The cumulative distribution of number of outbound links. Cf. Andrew Miller et al., "Discovering
    * bitcoin's public topology and influential nodes", 2015.
    */
   public static final double[] DEGREE_DISTRIBUTION =
-      DEGREE_DISTRIBUTION_BITCOIN_2015; // 今回のシミュレーションでは変更はなし？ oba
+      DEGREE_DISTRIBUTION_ETHEREUM; // Ethereumネットワークの特性に合わせて調整
 }

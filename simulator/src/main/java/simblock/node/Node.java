@@ -450,13 +450,19 @@ public class Node {
           messageTask = new CmpctBlockMessageTask(this, to, block, delay);
         } else {
           // Else use lagacy protocol.
-          long delay = BLOCK_SIZE * 8 / (bandwidth / 1000) + processingTime;
+          // Forerunnerノードの場合は処理時間を短縮
+          long effectiveProcessingTime = (this.getClass().getSimpleName().equals("ForerunnerNode")) ? 
+              Math.max(1L, processingTime / 6) : processingTime; // 6.06×スピードアップ効果
+          long delay = BLOCK_SIZE * 8 / (bandwidth / 1000) + effectiveProcessingTime;
           messageTask = new BlockMessageTask(this, to, block, delay);
         }
       } else if (this.messageQue.get(0) instanceof GetBlockTxnMessageTask) {
         // Else from requests missing transactions.
         Block block = ((GetBlockTxnMessageTask) this.messageQue.get(0)).getBlock();
-        long delay = getFailedBlockSize() * 8 / (bandwidth / 1000) + processingTime;
+        // Forerunnerノードの場合は処理時間を短縮
+        long effectiveProcessingTime = (this.getClass().getSimpleName().equals("ForerunnerNode")) ? 
+            Math.max(1L, processingTime / 6) : processingTime; // 6.06×スピードアップ効果
+        long delay = getFailedBlockSize() * 8 / (bandwidth / 1000) + effectiveProcessingTime;
         messageTask = new BlockMessageTask(this, to, block, delay);
       } else {
         throw new UnsupportedOperationException();
