@@ -1,0 +1,229 @@
+﻿{
+    "execution_info":  {
+                           "environment":  "Windows PowerShell",
+                           "failure_count":  0,
+                           "success_rate":  100,
+                           "end_time":  "2025-08-31 16:18:12",
+                           "success_count":  24,
+                           "total_scenarios":  24,
+                           "start_time":  "2025-08-31 16:18:12"
+                       },
+    "scenarios":  [
+                      {
+                          "timestamp":  "2025-08-31 16:14:19",
+                          "name":  "scenario_a1",
+                          "execution_time":  3.9178108,
+                          "log_file":  "scenario_a1_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.1,
+                          "slow_node_ratio":  0.5
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:14:29",
+                          "name":  "scenario_a2",
+                          "execution_time":  4.4505778,
+                          "log_file":  "scenario_a2_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.3,
+                          "slow_node_ratio":  0.5
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:14:40",
+                          "name":  "scenario_a3",
+                          "execution_time":  4.488132,
+                          "log_file":  "scenario_a3_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.5,
+                          "slow_node_ratio":  0.5
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:14:50",
+                          "name":  "scenario_a4",
+                          "execution_time":  4.0974727,
+                          "log_file":  "scenario_a4_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.7,
+                          "slow_node_ratio":  0.5
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:15:00",
+                          "name":  "scenario_a5",
+                          "execution_time":  4.4832225999999995,
+                          "log_file":  "scenario_a5_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.9,
+                          "slow_node_ratio":  0.5
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:15:10",
+                          "name":  "scenario_b1",
+                          "execution_time":  4.0843519,
+                          "log_file":  "scenario_b1_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.7,
+                          "slow_node_ratio":  0.1
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:15:20",
+                          "name":  "scenario_b2",
+                          "execution_time":  3.9395873999999997,
+                          "log_file":  "scenario_b2_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.7,
+                          "slow_node_ratio":  0.5
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:15:31",
+                          "name":  "scenario_b3",
+                          "execution_time":  4.443735,
+                          "log_file":  "scenario_b3_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.7,
+                          "slow_node_ratio":  0.9
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:15:41",
+                          "name":  "scenario_c1",
+                          "execution_time":  4.4898377,
+                          "log_file":  "scenario_c1_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.9,
+                          "slow_node_ratio":  0.1
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:15:51",
+                          "name":  "scenario_c2",
+                          "execution_time":  4.559477,
+                          "log_file":  "scenario_c2_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.9,
+                          "slow_node_ratio":  0.3
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:16:02",
+                          "name":  "scenario_c3",
+                          "execution_time":  4.35882,
+                          "log_file":  "scenario_c3_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.9,
+                          "slow_node_ratio":  0.5
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:16:11",
+                          "name":  "scenario_c4",
+                          "execution_time":  4.0723174,
+                          "log_file":  "scenario_c4_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.9,
+                          "slow_node_ratio":  0.7
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:16:22",
+                          "name":  "scenario_c5",
+                          "execution_time":  4.1147602,
+                          "log_file":  "scenario_c5_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.7,
+                          "slow_node_ratio":  0.1
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:16:31",
+                          "name":  "scenario_c6",
+                          "execution_time":  3.7947822999999996,
+                          "log_file":  "scenario_c6_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.7,
+                          "slow_node_ratio":  0.3
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:16:41",
+                          "name":  "scenario_c7",
+                          "execution_time":  4.1911235,
+                          "log_file":  "scenario_c7_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.7,
+                          "slow_node_ratio":  0.5
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:16:50",
+                          "name":  "scenario_c8",
+                          "execution_time":  3.7217175,
+                          "log_file":  "scenario_c8_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.7,
+                          "slow_node_ratio":  0.7
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:17:01",
+                          "name":  "scenario_c9",
+                          "execution_time":  4.0582752,
+                          "log_file":  "scenario_c9_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.5,
+                          "slow_node_ratio":  0.1
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:17:11",
+                          "name":  "scenario_c10",
+                          "execution_time":  3.8696481,
+                          "log_file":  "scenario_c10_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.5,
+                          "slow_node_ratio":  0.3
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:17:21",
+                          "name":  "scenario_c11",
+                          "execution_time":  4.0593366,
+                          "log_file":  "scenario_c11_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.5,
+                          "slow_node_ratio":  0.5
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:17:30",
+                          "name":  "scenario_c12",
+                          "execution_time":  3.7140104999999997,
+                          "log_file":  "scenario_c12_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.5,
+                          "slow_node_ratio":  0.7
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:17:40",
+                          "name":  "scenario_c13",
+                          "execution_time":  3.9063407,
+                          "log_file":  "scenario_c13_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.3,
+                          "slow_node_ratio":  0.1
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:17:51",
+                          "name":  "scenario_c14",
+                          "execution_time":  4.0673588,
+                          "log_file":  "scenario_c14_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.3,
+                          "slow_node_ratio":  0.3
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:18:00",
+                          "name":  "scenario_c15",
+                          "execution_time":  3.4845599,
+                          "log_file":  "scenario_c15_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.3,
+                          "slow_node_ratio":  0.5
+                      },
+                      {
+                          "timestamp":  "2025-08-31 16:18:10",
+                          "name":  "scenario_c16",
+                          "execution_time":  3.3639924999999997,
+                          "log_file":  "scenario_c16_results.log",
+                          "success":  true,
+                          "forerunner_ratio":  0.3,
+                          "slow_node_ratio":  0.7
+                      }
+                  ]
+}

@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import simblock.block.Block;
 import simblock.node.Node;
+import simblock.util.DebugLogger;
 
 /**
  * The type Simulator is tasked with maintaining the list of simulated nodes and managing the block
@@ -127,6 +128,9 @@ public class Simulator {
         delta = 0;
       }
       propagation.put(node.getNodeID(), delta);
+
+      // ブロック伝播統計の更新
+      updatePropagationStatistics(block, delta, node);
     } else {
       // If the block has not been seen by any node and there is no memory allocated
       // TODO move magic number to constant
@@ -148,6 +152,26 @@ public class Simulator {
       observedBlocks.add(block);
       // Record the propagation time
       observedPropagations.add(propagation);
+
+      // 新しいブロックの伝播統計を初期化
+      initializePropagationStatistics(block, delta, node);
+    }
+  }
+
+  /** ブロック伝播統計の初期化 */
+  private static void initializePropagationStatistics(Block block, long delta, Node node) {
+    // 統計情報の初期化（実際の実装ではより詳細な統計を記録）
+    DebugLogger.blockDebug(String.valueOf(block.getId()), 
+        String.format("伝播開始: ノード%d, 遅延%dms, 高さ%d", 
+            node.getNodeID(), delta, block.getHeight()));
+  }
+
+  /** ブロック伝播統計の更新 */
+  private static void updatePropagationStatistics(Block block, long delta, Node node) {
+    // 統計情報の更新（実際の実装ではより詳細な統計を記録）
+    if (delta > 0) {
+      DebugLogger.blockDebug(String.valueOf(block.getId()), 
+          String.format("伝播完了: ノード%d, 総遅延%dms", node.getNodeID(), delta));
     }
   }
 

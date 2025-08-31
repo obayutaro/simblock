@@ -45,10 +45,61 @@ public class Network {
    */
   public static final long getLatency(int from, int to) {
     long mean = LATENCY[from][to];
-    double shape = 0.2 * mean;
-    double scale = mean - 5;
-    long v = Math.round(scale / Math.pow(random.nextDouble(), 1.0 / shape));
-    return Math.max(1L, v);
+
+    // より現実的な遅延計算
+    if (mean <= 0) {
+      mean = 15; // 最小遅延を15msに設定（より現実的）
+    }
+
+    // 地域間の距離に基づく遅延調整
+    long adjustedMean = adjustLatencyByRegion(from, to, mean);
+
+    // 20%の分散を持つ現実的な遅延分布
+    double variance = 0.2 * adjustedMean;
+    double minDelay = Math.max(1.0, adjustedMean - variance);
+    double maxDelay = adjustedMean + variance;
+
+    // 正規分布に近い遅延値を生成
+    double randomValue = random.nextDouble();
+    long calculatedDelay;
+
+    if (randomValue < 0.68) {
+      // 68%の確率で平均値付近
+      calculatedDelay = Math.round(adjustedMean + (randomValue - 0.5) * variance);
+    } else if (randomValue < 0.95) {
+      // 27%の確率でやや離れた値
+      calculatedDelay = Math.round(adjustedMean + (randomValue - 0.5) * variance * 1.5);
+    } else {
+      // 5%の確率で極端な値
+      calculatedDelay = Math.round(adjustedMean + (randomValue - 0.5) * variance * 2.0);
+    }
+
+    // 遅延値の範囲を制限
+    long finalDelay = Math.max(1L, Math.min(calculatedDelay, (long) (adjustedMean * 3)));
+
+    return finalDelay;
+  }
+
+  /** 地域間の距離に基づく遅延調整 */
+  private static long adjustLatencyByRegion(int from, int to, long baseLatency) {
+    if (from == to) {
+      // 同一地域内は基本遅延
+      return baseLatency;
+    }
+
+    // 地域間の距離に基づく遅延増加
+    int regionDistance = Math.abs(from - to);
+
+    if (regionDistance == 1) {
+      // 隣接地域
+      return baseLatency + 5;
+    } else if (regionDistance == 2) {
+      // 中距離地域
+      return baseLatency + 15;
+    } else {
+      // 遠距離地域
+      return baseLatency + 30;
+    }
   }
 
   /**

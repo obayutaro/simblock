@@ -54,6 +54,7 @@ import simblock.node.ForerunnerNode;
 import simblock.node.Node;
 import simblock.settings.ForerunnerConfig;
 import simblock.task.AbstractMintingTask;
+import simblock.util.DebugLogger;
 
 /** The type Main represents the entry point. */
 public class Main {
@@ -104,6 +105,22 @@ public class Main {
    */
   public static void main(String[] args) {
     final long start = System.currentTimeMillis();
+
+    // デバッグログの初期化
+    DebugLogger.section("SimBlock シミュレーション開始");
+    DebugLogger.info("開始時刻: " + new java.util.Date());
+    DebugLogger.info("引数: " + java.util.Arrays.toString(args));
+    DebugLogger.info("Java バージョン: " + System.getProperty("java.version"));
+    DebugLogger.logMemoryUsage("初期化時");
+
+    // ネットワーク設定の初期化
+    simblock.settings.NetworkConfiguration.initializeNetworkSettings();
+
+    // Forerunner設定の統計情報を表示
+    if (simblock.settings.ForerunnerConfig.enabled()) {
+      simblock.settings.ForerunnerConfig.printPredictionStats();
+    }
+
     setTargetInterval(INTERVAL);
 
     // start json format
@@ -147,7 +164,7 @@ public class Main {
 
     // Check if simulation completed successfully
     if (getSimulatedNodes().isEmpty()) {
-      System.err.println("Simulation failed: No nodes available for analysis.");
+      DebugLogger.error("シミュレーション失敗: 分析可能なノードがありません");
       return;
     }
 
@@ -164,8 +181,7 @@ public class Main {
       }
     }
     if (seedBlock == null) {
-      System.err.println(
-          "Error: No node has a block yet. Simulation may have terminated before propagation.");
+      DebugLogger.error("エラー: ブロックを持つノードがありません。伝播前にシミュレーションが終了した可能性があります");
       return;
     }
     Block block = seedBlock;
@@ -246,8 +262,17 @@ public class Main {
 
     long end = System.currentTimeMillis();
     simulationTime += end - start;
-    // Log simulation time in milliseconds
-    System.out.println(simulationTime);
+    
+    // シミュレーション完了のデバッグ情報
+    DebugLogger.section("シミュレーション完了");
+    DebugLogger.info("終了時刻: " + new java.util.Date());
+    DebugLogger.success("総実行時間: " + simulationTime + " ms");
+    DebugLogger.printStats("ブロック統計", 
+        "処理済みブロック数: " + blockList.size(),
+        "オーファンブロック数: " + orphans.size(),
+        "平均オーファン数: " + averageOrphansSize
+    );
+    DebugLogger.logMemoryUsage("終了時");
   }
 
   // TODO 以下の初期生成はシナリオを読み込むようにする予定
@@ -436,6 +461,9 @@ public class Main {
 
     System.out.println("Successfully created " + getSimulatedNodes().size() + " nodes.");
 
+    // 未来コンテキスト共有の設定情報を出力
+    printFutureContextSharingConfig();
+
     // Select node based on mining power to mint the genesis block
     Node genesisMinter = getGenesisMinter();
     if (genesisMinter == null) {
@@ -454,6 +482,43 @@ public class Main {
         }
       }
     }
+  }
+
+  /** 未来コンテキスト共有の設定情報を出力 */
+  private static void printFutureContextSharingConfig() {
+    String slowNodeRatioStr = System.getenv("SLOW_NODE_RATIO");
+    double slowNodeRatio = 0.7; // デフォルト値
+
+    if (slowNodeRatioStr != null && !slowNodeRatioStr.isEmpty()) {
+      try {
+        slowNodeRatio = Double.parseDouble(slowNodeRatioStr);
+        slowNodeRatio = Math.max(0.0, Math.min(1.0, slowNodeRatio));
+      } catch (NumberFormatException e) {
+        System.err.println(
+            "Warning: Invalid SLOW_NODE_RATIO value: " + slowNodeRatioStr + ". Using default: 0.7");
+      }
+    }
+
+    // デバッグログを無効化
+    // System.out.println("=== Future Context Sharing Configuration ===");
+    // System.out.println("SLOW_NODE_RATIO: " + slowNodeRatio);
+    // System.out.println("High Performance Node Ratio: " + (1.0 - slowNodeRatio));
+    // System.out.println("Low Performance Node Ratio: " + slowNodeRatio);
+    // System.out.println("==========================================");
+
+    // デバッグログを無効化
+    // System.out.println("First 20 nodes performance:");
+    // for (int i = 0; i < Math.min(20, getSimulatedNodes().size()); i++) {
+    //   Node node = getSimulatedNodes().get(i);
+    //   simblock.forerunner.FutureContextSharingManager fcsm =
+    // node.getFutureContextSharingManager();
+    //   if (fcsm != null) {
+    //     System.out.println(
+    //         String.format(
+    //             "  Node %d: %s (delay: %dms)",
+    //             node.getNodeID(), fcsm.getNodeType(), fcsm.getContextGenerationDelay()));
+    //   }
+    // }
   }
 
   /**

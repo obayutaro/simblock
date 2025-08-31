@@ -32,10 +32,10 @@ public class FutureContextManager {
   public void generate(Block current) {
     // Forerunnerノードのみ複数未来対応
     boolean isEnhancedMode = isEnhancedMode();
-    
+
     if (isEnhancedMode) {
       List<FutureContext> futures = new ArrayList<>();
-      
+
       // 複数の未来コンテキストを生成
       for (int i = 0; i < maxFutures; i++) {
         FutureContext fc = new FutureContext(current);
@@ -43,7 +43,7 @@ public class FutureContextManager {
         fc.addVariation(i * 0.1); // 簡易的な変動
         futures.add(fc);
       }
-      
+
       fcMap.put(current.getIndex(), futures);
     } else {
       // 基本的な単一未来コンテキスト
@@ -65,7 +65,7 @@ public class FutureContextManager {
     // Forerunnerノードのみ詳細な制約チェックを適用
     boolean isEnhancedMode = isEnhancedMode();
     double constraintScore;
-    
+
     if (isEnhancedMode) {
       // CD-Equiv制約の詳細チェック
       constraintScore = evaluateCDEquivConstraints(bestMatch, next);
@@ -75,7 +75,7 @@ public class FutureContextManager {
       // 基本的な制約チェックのみ
       constraintScore = 0.8; // 基本的な成功率
     }
-    
+
     // 制約スコアに基づく結果判定
     if (constraintScore >= 0.95) {
       return Outcome.PERFECT;
@@ -85,6 +85,79 @@ public class FutureContextManager {
       return Outcome.MISSED;
     } else {
       return Outcome.NONE;
+    }
+  }
+
+  /** 制約ベース投機実行の制約満足度を評価 CD-Equiv制約（制御フローとデータ依存関係の同一性）を判定 */
+  public double evaluateConstraintSatisfaction(Block block) {
+    if (block == null) {
+      return 0.0;
+    }
+
+    // 制約満足度の詳細評価
+    double controlFlowSatisfaction = evaluateControlFlowConstraints(block);
+    double dataDependencySatisfaction = evaluateDataDependencyConstraints(block);
+    double executionPathSatisfaction = evaluateExecutionPathConstraints(block);
+
+    // 重み付け平均で最終的な制約満足度を計算
+    double finalSatisfaction =
+        (controlFlowSatisfaction * 0.4
+            + dataDependencySatisfaction * 0.4
+            + executionPathSatisfaction * 0.2);
+
+    return Math.max(0.0, Math.min(1.0, finalSatisfaction));
+  }
+
+  /** 制御フロー制約の満足度を評価 */
+  private double evaluateControlFlowConstraints(Block block) {
+    // トランザクション数に基づく制御フロー複雑度
+    int txCount = block.getTxList().size();
+
+    // 複雑度が高いほど制約満足度が低下
+    if (txCount <= 10) {
+      return 0.95; // 単純な制御フロー
+    } else if (txCount <= 50) {
+      return 0.85; // 中程度の複雑度
+    } else if (txCount <= 100) {
+      return 0.75; // 高い複雑度
+    } else {
+      return 0.60; // 非常に高い複雑度
+    }
+  }
+
+  /** データ依存関係制約の満足度を評価 */
+  private double evaluateDataDependencyConstraints(Block block) {
+    // ブロックの高さに基づくデータ依存関係の複雑度
+    long blockHeight = block.getHeight();
+
+    // 高さが高いほど依存関係が複雑
+    if (blockHeight <= 100) {
+      return 0.90; // 低い依存関係
+    } else if (blockHeight <= 1000) {
+      return 0.80; // 中程度の依存関係
+    } else if (blockHeight <= 10000) {
+      return 0.70; // 高い依存関係
+    } else {
+      return 0.60; // 非常に高い依存関係
+    }
+  }
+
+  /** 実行パス制約の満足度を評価 */
+  private double evaluateExecutionPathConstraints(Block block) {
+    // 親ブロックとの関係に基づく実行パスの一貫性
+    Block parent = block.getParent();
+    if (parent == null) {
+      return 1.0; // ジェネシスブロック
+    }
+
+    // 親ブロックとの時間差に基づく一貫性
+    long timeDiff = block.getTime() - parent.getTime();
+    if (timeDiff <= 10000) { // 10秒以内
+      return 0.95; // 高い一貫性
+    } else if (timeDiff <= 60000) { // 1分以内
+      return 0.85; // 中程度の一貫性
+    } else {
+      return 0.70; // 低い一貫性
     }
   }
 
@@ -105,7 +178,7 @@ public class FutureContextManager {
   private FutureContext findBestMatch(List<FutureContext> futures, Block next) {
     FutureContext bestMatch = null;
     double bestScore = 0.0;
-    
+
     for (FutureContext fc : futures) {
       if (fc.matches(next)) {
         double score = calculateMatchScore(fc, next);
@@ -115,7 +188,7 @@ public class FutureContextManager {
         }
       }
     }
-    
+
     return bestMatch;
   }
 
@@ -129,22 +202,22 @@ public class FutureContextManager {
   /** CD-Equiv制約の詳細評価 */
   private double evaluateCDEquivConstraints(FutureContext fc, Block next) {
     double score = 0.0;
-    
+
     // 制御フロー制約チェック
     if (checkControlFlowEquivalence(fc, next)) {
       score += 0.4;
     }
-    
+
     // データ依存関係制約チェック
     if (checkDataDependencyEquivalence(fc, next)) {
       score += 0.4;
     }
-    
+
     // トランザクション順序制約チェック
     if (checkTransactionOrderEquivalence(fc, next)) {
       score += 0.2;
     }
-    
+
     return Math.min(1.0, score);
   }
 

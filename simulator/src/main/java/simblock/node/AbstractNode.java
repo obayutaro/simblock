@@ -3,6 +3,7 @@ package simblock.node;
 import java.util.Collections;
 import java.util.Map;
 import simblock.block.Block;
+import simblock.forerunner.FutureContextSharingManager;
 import simblock.message.BlockMessage;
 import simblock.message.TxMessage;
 
@@ -10,6 +11,7 @@ import simblock.message.TxMessage;
 public abstract class AbstractNode extends Node {
 
   private final Map<String, String> params;
+  private final FutureContextSharingManager fcsm; // 未来コンテキスト共有マネージャー
 
   /** 8 引数 + 任意パラメータを受け取る“完全版”コンストラクタ。 // ★追加 */
   public AbstractNode(
@@ -33,6 +35,7 @@ public abstract class AbstractNode extends Node {
         useCBR,
         isChurnNode); // ★変更: Node(8 引数)
     this.params = params;
+    this.fcsm = new FutureContextSharingManager(this); // 未来コンテキスト共有マネージャーを初期化
   }
 
   /** 既存 NodeFactory と互換にする“簡易版”。 // ★追加 空のパラメータマップを自動設定する。 */
@@ -61,6 +64,10 @@ public abstract class AbstractNode extends Node {
   /* ---- 追加 API ---- */
   public Map<String, String> getParams() {
     return params;
+  }
+
+  public FutureContextSharingManager getFutureContextSharingManager() {
+    return this.fcsm;
   }
 
   /* ---- 拡張イベントハンドラ ---- */

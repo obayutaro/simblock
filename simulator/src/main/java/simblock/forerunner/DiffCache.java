@@ -24,23 +24,23 @@ public class DiffCache {
   public double applyReusableDiff(Block block) {
     Set<Long> cached = blockToTxs.remove(block.getIndex());
     if (cached == null || block.getTxList().isEmpty()) return 0.0;
-    
+
     long hit = cached.stream().filter(block.getTxList()::contains).count();
     double reuseRate = hit / (double) block.getTxList().size();
-    
+
     // Forerunnerノードのみ拡張機能を適用
     boolean isEnhancedMode = isEnhancedMode();
-    
+
     if (isEnhancedMode) {
       // 再利用履歴を更新
       reuseHistory.put(block.getIndex(), reuseRate);
-      
+
       // 適応的メモ化: 再利用率が高い場合はより積極的にキャッシュ
       if (reuseRate > adaptiveThreshold) {
         return Math.min(1.0, reuseRate * 1.2); // 20%向上
       }
     }
-    
+
     return reuseRate;
   }
 
@@ -65,13 +65,14 @@ public class DiffCache {
       blockToTxs.remove(oldestKey);
       return;
     }
-    
+
     // 再利用率が最も低いエントリを削除
-    Long leastUsedKey = reuseHistory.entrySet().stream()
-        .min(Map.Entry.comparingByValue())
-        .map(Map.Entry::getKey)
-        .orElse(null);
-    
+    Long leastUsedKey =
+        reuseHistory.entrySet().stream()
+            .min(Map.Entry.comparingByValue())
+            .map(Map.Entry::getKey)
+            .orElse(null);
+
     if (leastUsedKey != null) {
       blockToTxs.remove(leastUsedKey);
       reuseHistory.remove(leastUsedKey);
@@ -83,15 +84,13 @@ public class DiffCache {
     Map<String, Object> stats = new HashMap<>();
     stats.put("cacheSize", blockToTxs.size());
     stats.put("historySize", reuseHistory.size());
-    
+
     if (!reuseHistory.isEmpty()) {
-      double avgReuseRate = reuseHistory.values().stream()
-          .mapToDouble(Double::doubleValue)
-          .average()
-          .orElse(0.0);
+      double avgReuseRate =
+          reuseHistory.values().stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
       stats.put("avgReuseRate", avgReuseRate);
     }
-    
+
     return stats;
   }
 }

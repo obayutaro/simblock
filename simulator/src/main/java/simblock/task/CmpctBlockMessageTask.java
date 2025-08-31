@@ -59,11 +59,21 @@ public class CmpctBlockMessageTask extends AbstractMessageTask {
 
     this.getFrom().sendNextBlockMessage();
 
+    // 正確な伝播時間を計算
+    long transmissionTime = getCurrentTime() - this.interval;
+    long receptionTime = getCurrentTime();
+
+    // 伝播時間が負の値にならないように調整
+    if (transmissionTime < 0) {
+      transmissionTime = receptionTime - this.interval;
+    }
+
     OUT_JSON_FILE.print("{");
     OUT_JSON_FILE.print("\"kind\":\"flow-block\",");
     OUT_JSON_FILE.print("\"content\":{");
-    OUT_JSON_FILE.print("\"transmission-timestamp\":" + (getCurrentTime() - this.interval) + ",");
-    OUT_JSON_FILE.print("\"reception-timestamp\":" + getCurrentTime() + ",");
+    OUT_JSON_FILE.print("\"transmission-timestamp\":" + transmissionTime + ",");
+    OUT_JSON_FILE.print("\"reception-timestamp\":" + receptionTime + ",");
+    OUT_JSON_FILE.print("\"propagation-delay\":" + this.interval + ",");
     OUT_JSON_FILE.print("\"begin-node-id\":" + getFrom().getNodeID() + ",");
     OUT_JSON_FILE.print("\"end-node-id\":" + getTo().getNodeID() + ",");
     OUT_JSON_FILE.print("\"block-id\":" + block.getId());

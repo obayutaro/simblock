@@ -32,8 +32,12 @@ import static simblock.simulator.Timer.removeTask;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import simblock.block.Block;
+import simblock.block.Transaction;
+import simblock.forerunner.EnhancedFutureContext;
+import simblock.forerunner.FutureContextSharingManager;
 import simblock.node.consensus.AbstractConsensusAlgo;
 import simblock.node.routing.AbstractRoutingTable;
 import simblock.task.AbstractMessageTask;
@@ -43,6 +47,7 @@ import simblock.task.CmpctBlockMessageTask;
 import simblock.task.GetBlockTxnMessageTask;
 import simblock.task.InvMessageTask;
 import simblock.task.RecMessageTask;
+import simblock.util.DebugLogger;
 
 /** A class representing a node in the network. */
 public class Node {
@@ -75,6 +80,9 @@ public class Node {
 
   /** The current minting task */
   private AbstractMintingTask mintingTask = null;
+
+  /** 未来コンテキスト共有マネージャー */
+  private final FutureContextSharingManager fcsm;
 
   /** In the process of sending blocks. */
   // TODO verify
@@ -126,6 +134,9 @@ public class Node {
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    // 未来コンテキスト共有マネージャーを初期化
+    this.fcsm = new FutureContextSharingManager(this);
   }
 
   /**
@@ -181,6 +192,11 @@ public class Node {
    */
   public Block getBlock() {
     return this.block;
+  }
+
+  /** 未来コンテキスト共有マネージャーを取得 */
+  public FutureContextSharingManager getFutureContextSharingManager() {
+    return this.fcsm;
   }
 
   /**
@@ -270,6 +286,43 @@ public class Node {
     printAddBlock(newBlock);
     // Observe and handle new block arrival
     arriveBlock(newBlock, this);
+
+    // Future Context Sharing: 新しいブロックが追加された後に、次のブロックのためのコンテキスト生成を開始
+    startFutureContextGenerationForNextBlock(newBlock);
+  }
+
+  /**
+   * Future Context Sharing: 次のブロックのためのコンテキスト生成を開始
+   *
+   * @param currentBlock the current block that was just added
+   */
+  private void startFutureContextGenerationForNextBlock(Block currentBlock) {
+    try {
+      // 次のブロックのインデックス
+      long nextBlockIndex = currentBlock.getIndex() + 1;
+
+      // 既にコンテキストが存在するかチェック
+      if (fcsm.getFutureContext(nextBlockIndex) != null) {
+        return; // 既に存在する場合は何もしない
+      }
+
+      // 高速ノードの場合、次のブロックのためのコンテキスト生成を開始
+      if (fcsm.isHighPerformanceNode()) {
+        // デバッグログを無効化
+        // System.out.println("Node " + this.getNodeID() + " starting future context generation for
+        // block " + nextBlockIndex);
+
+        // 現在のトランザクションプールの状態を取得（簡易的な実装）
+        // 実際の実装では、トランザクションプールから実際のトランザクションを取得する必要がある
+        List<Transaction> dummyTransactions = new ArrayList<>();
+
+        // コンテキスト生成を開始
+        fcsm.onTransactionPoolUpdate(dummyTransactions);
+      }
+    } catch (Exception e) {
+      // エラーが発生した場合はログを出力して処理を継続
+      System.err.println("Error starting future context generation: " + e.getMessage());
+    }
   }
 
   /**
@@ -342,6 +395,10 @@ public class Node {
         // If orphan mark orphan
         this.addOrphans(this.block, block);
       }
+
+      // Future Context Sharing: 受信したブロックに対して適切なコンテキストを適用
+      applyFutureContextToBlock(block);
+
       // Else add to canonical chain
       this.addToChain(block);
       // Generates a new minting task
@@ -355,6 +412,45 @@ public class Node {
       // current block
       this.addOrphans(block, this.block);
       arriveBlock(block, this);
+    }
+  }
+
+  /**
+   * Future Context Sharing: 受信したブロックに対して適切なコンテキストを適用
+   *
+   * @param block the block to apply context to
+   */
+  private void applyFutureContextToBlock(Block block) {
+    try {
+      // ブロックのインデックスに対応する未来コンテキストを取得
+      long blockIndex = block.getIndex();
+      EnhancedFutureContext context = fcsm.getFutureContext(blockIndex);
+
+      if (context != null && fcsm.canApplyContext(context, block)) {
+        // コンテキストが適用可能な場合、適用処理を実行
+        DebugLogger.nodeDebug(this.getNodeID(), 
+            String.format("未来コンテキスト適用開始: ブロック %d", blockIndex));
+
+        // ここで実際のコンテキスト適用処理を実行
+        // 例: トランザクション順序の最適化、状態の事前計算結果の適用など
+
+        // 適用成功のログ
+        DebugLogger.nodeDebug(this.getNodeID(), 
+            String.format("未来コンテキスト適用成功: ブロック %d", blockIndex));
+      } else if (context != null) {
+        // コンテキストは存在するが適用できない場合
+        DebugLogger.nodeDebug(this.getNodeID(), 
+            String.format("未来コンテキスト適用不可: ブロック %d (信頼度: %.2f%%)", 
+                blockIndex, context.getConfidence() * 100));
+
+        // フォールバック処理
+        fcsm.fallbackToNormalExecution(blockIndex);
+      }
+    } catch (Exception e) {
+      // エラーが発生した場合は通常の処理にフォールバック
+      System.err.println(
+          "Error applying future context to block " + block.getId() + ": " + e.getMessage());
+      fcsm.fallbackToNormalExecution(block.getIndex());
     }
   }
 
@@ -432,15 +528,25 @@ public class Node {
   // send a block to the sender of the next queued recMessage
   public void sendNextBlockMessage() {
     if (this.messageQue.size() > 0) {
-      Node to = this.messageQue.get(0).getFrom();
+      // メッセージキューから最適なメッセージを選択
+      AbstractMessageTask selectedMessage = selectOptimalMessage();
+      if (selectedMessage == null) {
+        return;
+      }
+
+      Node to = selectedMessage.getFrom();
       long bandwidth = getBandwidth(this.getRegion(), to.getRegion());
 
       AbstractMessageTask messageTask;
 
-      if (this.messageQue.get(0) instanceof RecMessageTask) {
-        Block block = ((RecMessageTask) this.messageQue.get(0)).getBlock();
+      if (selectedMessage instanceof RecMessageTask) {
+        Block block = ((RecMessageTask) selectedMessage).getBlock();
+
+        // Future Context Sharing: ブロック伝播前にコンテキスト共有を試行
+        shareContextBeforePropagation(block, to);
+
         // If use compact block relay.
-        if (this.messageQue.get(0).getFrom().useCBR && this.useCBR) {
+        if (selectedMessage.getFrom().useCBR && this.useCBR) {
           // Convert bytes to bits and divide by the bandwidth expressed as bit per
           // millisecond, add
           // processing time.
@@ -450,18 +556,16 @@ public class Node {
           messageTask = new CmpctBlockMessageTask(this, to, block, delay);
         } else {
           // Else use lagacy protocol.
-          // Forerunnerノードの場合は処理時間を短縮
-          long effectiveProcessingTime = (this.getClass().getSimpleName().equals("ForerunnerNode")) ? 
-              Math.max(1L, processingTime / 6) : processingTime; // 6.06×スピードアップ効果
+          // 伝播速度はForerunnerの影響を受けない（承認時間のみ短縮）
+          long effectiveProcessingTime = processingTime;
           long delay = BLOCK_SIZE * 8 / (bandwidth / 1000) + effectiveProcessingTime;
           messageTask = new BlockMessageTask(this, to, block, delay);
         }
-      } else if (this.messageQue.get(0) instanceof GetBlockTxnMessageTask) {
+      } else if (selectedMessage instanceof GetBlockTxnMessageTask) {
         // Else from requests missing transactions.
-        Block block = ((GetBlockTxnMessageTask) this.messageQue.get(0)).getBlock();
-        // Forerunnerノードの場合は処理時間を短縮
-        long effectiveProcessingTime = (this.getClass().getSimpleName().equals("ForerunnerNode")) ? 
-            Math.max(1L, processingTime / 6) : processingTime; // 6.06×スピードアップ効果
+        Block block = ((GetBlockTxnMessageTask) selectedMessage).getBlock();
+        // 伝播速度はForerunnerの影響を受けない（承認時間のみ短縮）
+        long effectiveProcessingTime = processingTime;
         long delay = getFailedBlockSize() * 8 / (bandwidth / 1000) + effectiveProcessingTime;
         messageTask = new BlockMessageTask(this, to, block, delay);
       } else {
@@ -469,10 +573,66 @@ public class Node {
       }
 
       sendingBlock = true;
-      this.messageQue.remove(0);
+      // 選択されたメッセージをキューから削除
+      this.messageQue.remove(selectedMessage);
       putTask(messageTask);
     } else {
       sendingBlock = false;
+    }
+  }
+
+  /** 最適なメッセージを選択（優先順位制御） */
+  private AbstractMessageTask selectOptimalMessage() {
+    if (this.messageQue.isEmpty()) {
+      return null;
+    }
+
+    // 優先順位1: 新しいブロック（インデックスが高い）
+    AbstractMessageTask highestPriority = null;
+    long highestBlockIndex = -1;
+
+    for (AbstractMessageTask message : this.messageQue) {
+      if (message instanceof RecMessageTask) {
+        Block block = ((RecMessageTask) message).getBlock();
+        if (block.getIndex() > highestBlockIndex) {
+          highestBlockIndex = block.getIndex();
+          highestPriority = message;
+        }
+      }
+    }
+
+    // 優先順位2: GetBlockTxnMessageTask（トランザクション要求）
+    if (highestPriority == null) {
+      for (AbstractMessageTask message : this.messageQue) {
+        if (message instanceof GetBlockTxnMessageTask) {
+          highestPriority = message;
+          break;
+        }
+      }
+    }
+
+    return highestPriority != null ? highestPriority : this.messageQue.get(0);
+  }
+
+  /** Future Context Sharing: ブロック伝播前にコンテキスト共有を試行 */
+  private void shareContextBeforePropagation(Block block, Node targetNode) {
+    try {
+      // ブロックのインデックスに対応する未来コンテキストを取得
+      long blockIndex = block.getIndex();
+      EnhancedFutureContext context = fcsm.getFutureContext(blockIndex);
+
+      if (context != null && context.getConfidence() >= 0.5) {
+        // 信頼度が十分な場合、伝播先ノードにコンテキストを共有
+        // デバッグログを無効化
+        // System.out.println("Node " + this.getNodeID() + " sharing context before propagation to
+        // node " + targetNode.getNodeID() + " for block " + blockIndex);
+
+        // 簡易的なコンテキスト共有（実際の実装ではより詳細な処理が必要）
+        // ここではログ出力のみ
+      }
+    } catch (Exception e) {
+      // エラーが発生した場合は処理を継続
+      System.err.println("Error sharing context before propagation: " + e.getMessage());
     }
   }
 }

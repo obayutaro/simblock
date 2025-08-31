@@ -22,7 +22,7 @@ import simblock.node.Node;
 /** An abstraction of the a routing table used by a {@link Node}. */
 public abstract class AbstractRoutingTable {
   private final Node selfNode;
-  private int numConnection = 8;
+  private int numConnection = 10;
 
   /**
    * Instantiates a new Abstract routing table.
