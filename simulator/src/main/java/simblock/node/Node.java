@@ -22,6 +22,7 @@ import static simblock.settings.SimulationConfiguration.CBR_FAILURE_BLOCK_SIZE_D
 import static simblock.settings.SimulationConfiguration.CBR_FAILURE_RATE_FOR_CHURN_NODE;
 import static simblock.settings.SimulationConfiguration.CBR_FAILURE_RATE_FOR_CONTROL_NODE;
 import static simblock.settings.SimulationConfiguration.COMPACT_BLOCK_SIZE;
+import static simblock.settings.SimulationConfiguration.PROPAGATION_PROCESSING_TIME;
 import static simblock.simulator.Main.OUT_JSON_FILE;
 import static simblock.simulator.Main.random;
 import static simblock.simulator.Network.getBandwidth;
@@ -32,10 +33,8 @@ import static simblock.simulator.Timer.removeTask;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import simblock.block.Block;
-import simblock.block.Transaction;
 import simblock.forerunner.EnhancedFutureContext;
 import simblock.forerunner.FutureContextSharingManager;
 import simblock.node.consensus.AbstractConsensusAlgo;
@@ -93,8 +92,12 @@ public class Node {
   // TODO
   private final Set<Block> downloadingBlocks = new HashSet<>();
 
-  /** Processing time of tasks expressed in milliseconds. */
-  private final long processingTime = 2;
+  // 廃止予定：以前の固定検証時間は使用しない
+  // private final long processingTime = BASE_PROCESSING_TIME;
+
+  /** 共有はTx受信時のみ起動するか（伝播フェーズから分離） */
+  private static final boolean SHARE_ONLY_ON_TX =
+      Boolean.parseBoolean(System.getenv().getOrDefault("FORERUNNER_SHARE_ONLY_ON_TX", "false"));
 
   /**
    * Instantiates a new Node.
@@ -298,6 +301,9 @@ public class Node {
    */
   private void startFutureContextGenerationForNextBlock(Block currentBlock) {
     try {
+      if (!this.fcsm.isSharingEnabled()) {
+        return; // 共有無効時は生成の起点を作らない
+      }
       // 次のブロックのインデックス
       long nextBlockIndex = currentBlock.getIndex() + 1;
 
@@ -312,12 +318,7 @@ public class Node {
         // System.out.println("Node " + this.getNodeID() + " starting future context generation for
         // block " + nextBlockIndex);
 
-        // 現在のトランザクションプールの状態を取得（簡易的な実装）
-        // 実際の実装では、トランザクションプールから実際のトランザクションを取得する必要がある
-        List<Transaction> dummyTransactions = new ArrayList<>();
-
-        // コンテキスト生成を開始
-        fcsm.onTransactionPoolUpdate(dummyTransactions);
+        // コンテキスト生成はTx受信/タイマーへ統一（ここでは何もしない）
       }
     } catch (Exception e) {
       // エラーが発生した場合はログを出力して処理を継続
@@ -396,8 +397,34 @@ public class Node {
         this.addOrphans(this.block, block);
       }
 
-      // Future Context Sharing: 受信したブロックに対して適切なコンテキストを適用
+      // Future Context Sharing: 受信したブロックに対して適切なコンテキストを適用（非同期化）
+      if (this.fcsm != null && this.fcsm.isSharingEnabled()) {
+        simblock.task.ExecutionDelayTask applyTask =
+            new simblock.task.ExecutionDelayTask(this, 0L) {
+              @Override
+              public void run() {
       applyFutureContextToBlock(block);
+              }
+            };
+        putTask(applyTask);
+      }
+
+      // 重要: ブロック受信ログ（サンプリング）
+      if (this.getNodeID() % 50 == 1) {
+        String nodeTypeInfo = "Unknown";
+        try {
+          if (this.fcsm != null) {
+            nodeTypeInfo = this.fcsm.getNodeType().toString();
+          }
+        } catch (Exception e) {
+          // FCSMが初期化されていない場合
+        }
+        DebugLogger.info(
+            String.format(
+                "📥 Node %d (%s): ブロック%d受信→処理開始", this.getNodeID(), nodeTypeInfo, block.getId()));
+      }
+
+      // 共有フック（伝播フェーズ）はTx受信/タイマーに統一するためここでは起動しない
 
       // Else add to canonical chain
       this.addToChain(block);
@@ -428,20 +455,19 @@ public class Node {
 
       if (context != null && fcsm.canApplyContext(context, block)) {
         // コンテキストが適用可能な場合、適用処理を実行
-        DebugLogger.nodeDebug(this.getNodeID(), 
-            String.format("未来コンテキスト適用開始: ブロック %d", blockIndex));
+        DebugLogger.nodeDebug(this.getNodeID(), String.format("未来コンテキスト適用開始: ブロック %d", blockIndex));
 
         // ここで実際のコンテキスト適用処理を実行
         // 例: トランザクション順序の最適化、状態の事前計算結果の適用など
 
         // 適用成功のログ
-        DebugLogger.nodeDebug(this.getNodeID(), 
-            String.format("未来コンテキスト適用成功: ブロック %d", blockIndex));
+        DebugLogger.nodeDebug(this.getNodeID(), String.format("未来コンテキスト適用成功: ブロック %d", blockIndex));
       } else if (context != null) {
         // コンテキストは存在するが適用できない場合
-        DebugLogger.nodeDebug(this.getNodeID(), 
-            String.format("未来コンテキスト適用不可: ブロック %d (信頼度: %.2f%%)", 
-                blockIndex, context.getConfidence() * 100));
+        DebugLogger.nodeDebug(
+            this.getNodeID(),
+            String.format(
+                "未来コンテキスト適用不可: ブロック %d (信頼度: %.2f%%)", blockIndex, context.getConfidence() * 100));
 
         // フォールバック処理
         fcsm.fallbackToNormalExecution(blockIndex);
@@ -509,7 +535,97 @@ public class Node {
     if (message instanceof BlockMessageTask) {
       Block block = ((BlockMessageTask) message).getBlock();
       downloadingBlocks.remove(block);
-      this.receiveBlock(block);
+
+      // 🔍 デバッグ: ブロックメッセージ受信
+      if (this.getNodeID() % 100 == 1) {
+        String nodeClass = this.getClass().getSimpleName();
+        DebugLogger.debug(
+            String.format(
+                "🔥 %s Node %d: BlockMessage受信 → recvBlockMessage呼び出し",
+                nodeClass, this.getNodeID()));
+      }
+
+      // ★重要: ForerunnerNodeのrecvBlockMessageを正しく呼び出す
+      if (this instanceof AbstractNode) {
+        // BlockMessageTaskからBlockMessageを作成
+        simblock.message.BlockMessage blockMsg =
+            new simblock.message.BlockMessage(from.getNodeID(), block);
+
+        // 非Forerunnerノードの計算速度係数（高速/低速）を伝播前に適用
+        if (!(this instanceof ForerunnerNode)) {
+          simblock.forerunner.FutureContextSharingManager.NodeType nodeType =
+              this.getFutureContextSharingManager().getNodeType();
+          double nodeSpeedFactor = 1.0;
+          if (nodeType
+              == simblock.forerunner.FutureContextSharingManager.NodeType.NON_FORERUNNER_HIGH) {
+            nodeSpeedFactor = simblock.settings.SimulationConfiguration.HIGH_NODE_SPEED_FACTOR;
+          } else if (nodeType
+              == simblock.forerunner.FutureContextSharingManager.NodeType.NON_FORERUNNER_LOW) {
+            nodeSpeedFactor = simblock.settings.SimulationConfiguration.LOW_NODE_SPEED_FACTOR;
+          }
+
+          // 非Forerunnerノードの実行フェーズ遅延を Tx 数 × 0.56ms / 速度係数 に是正
+          // 実装上Txは生成していないため、常に平均160Txと仮定
+          long txCount = simblock.settings.SimulationConfiguration.ASSUMED_TX_PER_BLOCK;
+          long perTxUs = simblock.settings.SimulationConfiguration.TX_PROCESSING_TIME; // μs/Tx
+          long execUs = (long) Math.max(0L, Math.round(txCount * perTxUs * nodeSpeedFactor));
+          long delayMs = Math.max(0L, Math.round(execUs / 1000.0)); // μs→ms（切り上げず、最小1msクランプ撤廃）
+
+          // 📊 単一ノード処理時間ログ（非Forerunner適用時）
+          DebugLogger.singleNodeProcTime(
+              this.getNodeID(),
+              blockMsg.getBlock().getId(),
+              delayMs,
+              nodeType.toString(),
+              blockMsg.getBlock().getMinter() == this);
+
+          simblock.task.ExecutionDelayTask delayTask =
+              new simblock.task.ExecutionDelayTask(this, delayMs) {
+                @Override
+                public void run() {
+                  ((AbstractNode) Node.this).recvBlockMessage(blockMsg);
+                }
+              };
+          putTask(delayTask);
+        } else {
+          ((AbstractNode) this).recvBlockMessage(blockMsg);
+        }
+      } else {
+        // Nodeクラス（非Forerunner、非AbstractNode）の場合
+        simblock.forerunner.FutureContextSharingManager.NodeType nodeType =
+            this.getFutureContextSharingManager().getNodeType();
+        double nodeSpeedFactor = 1.0;
+        if (nodeType
+            == simblock.forerunner.FutureContextSharingManager.NodeType.NON_FORERUNNER_HIGH) {
+          nodeSpeedFactor = simblock.settings.SimulationConfiguration.HIGH_NODE_SPEED_FACTOR;
+        } else if (nodeType
+            == simblock.forerunner.FutureContextSharingManager.NodeType.NON_FORERUNNER_LOW) {
+          nodeSpeedFactor = simblock.settings.SimulationConfiguration.LOW_NODE_SPEED_FACTOR;
+        }
+
+        // 非Forerunnerノードの実行フェーズ遅延を Tx 数 × 0.56ms / 速度係数 に是正
+        long txCount = simblock.settings.SimulationConfiguration.ASSUMED_TX_PER_BLOCK;
+        long perTxUs = simblock.settings.SimulationConfiguration.TX_PROCESSING_TIME; // μs/Tx
+        long execUs = (long) Math.max(0L, Math.round(txCount * perTxUs * nodeSpeedFactor));
+        long delayMs = Math.max(0L, Math.round(execUs / 1000.0)); // μs→ms
+
+        // 📊 単一ノード処理時間ログ（非Forerunner適用時、Nodeクラス）
+        DebugLogger.singleNodeProcTime(
+            this.getNodeID(),
+            block.getId(),
+            delayMs,
+            nodeType.toString(),
+            block.getMinter() == this);
+
+        simblock.task.ExecutionDelayTask delayTask =
+            new simblock.task.ExecutionDelayTask(this, delayMs) {
+              @Override
+              public void run() {
+                Node.this.receiveBlock(block);
+              }
+            };
+        putTask(delayTask);
+      }
     }
   }
 
@@ -542,31 +658,39 @@ public class Node {
       if (selectedMessage instanceof RecMessageTask) {
         Block block = ((RecMessageTask) selectedMessage).getBlock();
 
-        // Future Context Sharing: ブロック伝播前にコンテキスト共有を試行
+        // Future Context Sharing: 伝播前共有は SHARE_ONLY_ON_TX=true のとき抑止
+        if (!SHARE_ONLY_ON_TX) {
         shareContextBeforePropagation(block, to);
+        }
 
         // If use compact block relay.
         if (selectedMessage.getFrom().useCBR && this.useCBR) {
           // Convert bytes to bits and divide by the bandwidth expressed as bit per
-          // millisecond, add
-          // processing time.
-          long delay = COMPACT_BLOCK_SIZE * 8 / (bandwidth / 1000) + processingTime;
+          // millisecond, add propagation processing time.
+          long delay = COMPACT_BLOCK_SIZE * 8 / (bandwidth / 1000) + PROPAGATION_PROCESSING_TIME;
 
           // Send compact block message.
           messageTask = new CmpctBlockMessageTask(this, to, block, delay);
         } else {
           // Else use lagacy protocol.
-          // 伝播速度はForerunnerの影響を受けない（承認時間のみ短縮）
-          long effectiveProcessingTime = processingTime;
-          long delay = BLOCK_SIZE * 8 / (bandwidth / 1000) + effectiveProcessingTime;
+          // 伝播処理時間は検証時間より短い（チェーン適用・再伝播のみ）
+          long effectivePropagationTime = PROPAGATION_PROCESSING_TIME;
+          long networkDelay = BLOCK_SIZE * 8 / (bandwidth / 1000);
+          long delay = networkDelay + effectivePropagationTime;
+
+          // 簡潔な伝播ログ（サンプリング）
+          if (this.getNodeID() % 100 == 1) { // 100ノードに1つだけログ出力
+            DebugLogger.info(String.format("Node %d 伝播: %dms", this.getNodeID(), delay));
+          }
+
           messageTask = new BlockMessageTask(this, to, block, delay);
         }
       } else if (selectedMessage instanceof GetBlockTxnMessageTask) {
         // Else from requests missing transactions.
         Block block = ((GetBlockTxnMessageTask) selectedMessage).getBlock();
-        // 伝播速度はForerunnerの影響を受けない（承認時間のみ短縮）
-        long effectiveProcessingTime = processingTime;
-        long delay = getFailedBlockSize() * 8 / (bandwidth / 1000) + effectiveProcessingTime;
+        // 伝播処理時間のみ使用
+        long effectivePropagationTime = PROPAGATION_PROCESSING_TIME;
+        long delay = getFailedBlockSize() * 8 / (bandwidth / 1000) + effectivePropagationTime;
         messageTask = new BlockMessageTask(this, to, block, delay);
       } else {
         throw new UnsupportedOperationException();
@@ -617,6 +741,9 @@ public class Node {
   /** Future Context Sharing: ブロック伝播前にコンテキスト共有を試行 */
   private void shareContextBeforePropagation(Block block, Node targetNode) {
     try {
+      if (SHARE_ONLY_ON_TX) {
+        return; // 設計どおりTxフェーズのみで共有する
+      }
       // ブロックのインデックスに対応する未来コンテキストを取得
       long blockIndex = block.getIndex();
       EnhancedFutureContext context = fcsm.getFutureContext(blockIndex);

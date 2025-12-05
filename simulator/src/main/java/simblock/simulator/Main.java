@@ -59,7 +59,7 @@ import simblock.util.DebugLogger;
 /** The type Main represents the entry point. */
 public class Main {
   /** The constant to be used as the simulation seed. */
-  public static Random random = new Random(10);
+  public static Random random;
 
   /** The initial simulation time. */
   public static long simulationTime = 0;
@@ -70,8 +70,35 @@ public class Main {
 
   static {
     try {
+      // Initialize random with configurable seed
+      // Priority: system property "sim.seed" > env "SIM_SEED" > default (time-based)
+      try {
+        String seedProp = System.getProperty("sim.seed");
+        String seedEnv = System.getenv("SIM_SEED");
+        if (seedProp != null && !seedProp.trim().isEmpty()) {
+          random = new Random(Long.parseLong(seedProp.trim()));
+        } else if (seedEnv != null && !seedEnv.trim().isEmpty()) {
+          random = new Random(Long.parseLong(seedEnv.trim()));
+        } else {
+          // fallback to time-based seed for variability across runs
+          random = new Random(System.nanoTime());
+        }
+      } catch (Exception ignored) {
+        random = new Random(System.nanoTime());
+      }
+
       CONF_FILE_URI = ClassLoader.getSystemResource("simulator.conf").toURI();
+      String outDirEnv = System.getenv("SIMBLOCK_OUT_DIR");
+      if (outDirEnv != null && !outDirEnv.trim().isEmpty()) {
+        OUT_FILE_URI = new File(outDirEnv.trim()).toURI();
+      } else {
       OUT_FILE_URI = CONF_FILE_URI.resolve(new URI("../output/"));
+      }
+      // 出力ディレクトリ作成
+      File outDir = new File(OUT_FILE_URI);
+      if (!outDir.exists()) {
+        outDir.mkdirs();
+      }
     } catch (URISyntaxException e) {
       e.printStackTrace();
     }
@@ -87,6 +114,9 @@ public class Main {
 
   static {
     try {
+      // 念のため出力ディレクトリを再作成確認
+      File outDir = new File(OUT_FILE_URI);
+      if (!outDir.exists()) outDir.mkdirs();
       OUT_JSON_FILE =
           new PrintWriter(
               new BufferedWriter(new FileWriter(new File(OUT_FILE_URI.resolve("./output.json")))));
@@ -109,7 +139,6 @@ public class Main {
     // デバッグログの初期化
     DebugLogger.section("SimBlock シミュレーション開始");
     DebugLogger.info("開始時刻: " + new java.util.Date());
-    DebugLogger.info("引数: " + java.util.Arrays.toString(args));
     DebugLogger.info("Java バージョン: " + System.getProperty("java.version"));
     DebugLogger.logMemoryUsage("初期化時");
 
@@ -117,6 +146,8 @@ public class Main {
     simblock.settings.NetworkConfiguration.initializeNetworkSettings();
 
     // Forerunner設定の統計情報を表示
+    // Forerunner設定の表示
+    simblock.settings.ForerunnerConfig.printSettings();
     if (simblock.settings.ForerunnerConfig.enabled()) {
       simblock.settings.ForerunnerConfig.printPredictionStats();
     }
@@ -262,17 +293,19 @@ public class Main {
 
     long end = System.currentTimeMillis();
     simulationTime += end - start;
-    
+
     // シミュレーション完了のデバッグ情報
     DebugLogger.section("シミュレーション完了");
     DebugLogger.info("終了時刻: " + new java.util.Date());
     DebugLogger.success("総実行時間: " + simulationTime + " ms");
-    DebugLogger.printStats("ブロック統計", 
+    DebugLogger.printStats(
+        "ブロック統計",
         "処理済みブロック数: " + blockList.size(),
         "オーファンブロック数: " + orphans.size(),
-        "平均オーファン数: " + averageOrphansSize
-    );
+        "平均オーファン数: " + averageOrphansSize);
     DebugLogger.logMemoryUsage("終了時");
+    // トラフィック帯域使用量統計を出力
+    DebugLogger.printTrafficBandwidthStats();
   }
 
   // TODO 以下の初期生成はシナリオを読み込むようにする予定
@@ -412,10 +445,12 @@ public class Main {
       // consensus algorithm
       Node node;
       if (ForerunnerConfig.isForerunnerNode(id)) {
+        // 🔍 デバッグ: ForerunnerNode作成
+        DebugLogger.debug(String.format("🔥 作成: Node %d → ForerunnerNode", id));
         node =
             new ForerunnerNode( // ★追加
                 id,
-                degreeList.get(id - 1) + 1,
+                degreeList.get(id - 1), // 累積分布に基づく接続数（平均4）
                 regionList.get(id - 1),
                 genMiningPower(),
                 TABLE,
@@ -423,10 +458,12 @@ public class Main {
                 useCBRNodes.get(id - 1),
                 churnNodes.get(id - 1));
       } else {
+        // 🔍 デバッグ: 通常Node作成
+        DebugLogger.debug(String.format("🔥 作成: Node %d → 通常Node", id));
         node =
             new Node( // 従来どおり
                 id,
-                degreeList.get(id - 1) + 1,
+                degreeList.get(id - 1), // 累積分布に基づく接続数（平均4）
                 regionList.get(id - 1),
                 genMiningPower(),
                 TABLE,

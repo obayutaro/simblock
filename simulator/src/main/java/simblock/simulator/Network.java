@@ -110,6 +110,7 @@ public class Network {
    * @return the bandwidth
    */
   public static final long getBandwidth(int from, int to) {
+    // パラメータ変更前の実装に戻す: すべての通信で地域固有の帯域幅を使用
     return Math.min(UPLOAD_BANDWIDTH[from], DOWNLOAD_BANDWIDTH[to]);
   }
 

@@ -6,6 +6,7 @@ import simblock.block.Block;
 import simblock.forerunner.FutureContextSharingManager;
 import simblock.message.BlockMessage;
 import simblock.message.TxMessage;
+import simblock.util.DebugLogger;
 
 /** Tx も Block も扱える拡張ノードの共通基底。 Vanilla SimBlock の Node を薄くラップして パラメータマップと汎用ハンドラを追加するだけ。 */
 public abstract class AbstractNode extends Node {
@@ -76,8 +77,21 @@ public abstract class AbstractNode extends Node {
   }
 
   public void recvBlockMessage(BlockMessage msg) {
-    /* デフォルトでは従来の receiveBlock() に委譲 */
+    /* デフォルトでは従来の receiveBlock() に委譲（伝播をブロックしない） */
     if (msg != null) {
+      // 🔍 デバッグ: AbstractNode処理
+      if (this.getNodeID() % 100 == 1) {
+        DebugLogger.debug(
+            String.format("🔥 AbstractNode %d: recvBlockMessage → receiveBlock", this.getNodeID()));
+      }
+
+      // 通常ノードの処理時間ログ（サンプリング）
+      if (this.getNodeID() % 100 == 1) {
+        DebugLogger.info(
+            String.format(
+                "Node %d (Standard): 検証時間 %dms",
+                this.getNodeID(), simblock.settings.SimulationConfiguration.BASE_PROCESSING_TIME));
+      }
       this.receiveBlock(msg.getBlock());
     }
   }
@@ -86,4 +100,6 @@ public abstract class AbstractNode extends Node {
   protected Block getChainHead() {
     return this.getBlock();
   } // Node#getBlock が Tip を返す想定
+
+  /* 伝播遅延モデルは sendNextBlockMessage/BlockMessageTask 側で管理 */
 }

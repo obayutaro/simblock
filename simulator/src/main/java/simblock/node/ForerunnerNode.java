@@ -1,5 +1,8 @@
 package simblock.node;
 
+import static simblock.settings.SimulationConfiguration.TX_PROCESSING_TIME;
+import static simblock.simulator.Timer.putTask;
+
 import java.util.ArrayList;
 import java.util.List;
 import simblock.block.Block;
@@ -11,15 +14,27 @@ import simblock.forerunner.PreplayManager;
 import simblock.message.BlockMessage;
 import simblock.message.TxMessage;
 import simblock.task.ExecutionDelayTask;
-import simblock.util.ParamUtil;
+import simblock.util.DebugLogger;
 
 /** Forerunner 機能（Pre-play, Component Reuse, Future Context）を模擬するノード。 */
 public class ForerunnerNode extends AbstractNode {
+  // 期待値定数（予測精度の加重逆スピードアップ）
+  private static final double WEIGHTED_INVERSE_SPEEDUP =
+      simblock.settings.ForerunnerConfig.PERFECT_PREDICTION_RATE
+              / simblock.settings.ForerunnerConfig.PERFECT_SPEEDUP
+          + simblock.settings.ForerunnerConfig.IMPERFECT_PREDICTION_RATE
+              / simblock.settings.ForerunnerConfig.IMPERFECT_SPEEDUP
+          + simblock.settings.ForerunnerConfig.MISSED_PREDICTION_RATE
+              / simblock.settings.ForerunnerConfig.MISSED_SPEEDUP;
+
+  // 基準実行時間（μs）: 平均Tx数×Tx処理時間
+  private static final long BASE_EXEC_US =
+      simblock.settings.SimulationConfiguration.ASSUMED_TX_PER_BLOCK * TX_PROCESSING_TIME;
 
   private final DiffCache diffCache = new DiffCache();
   private final PreplayManager ppm = new PreplayManager(diffCache);
   private final FutureContextManager fcm;
-  private final FutureContextSharingManager fcsm; // 未来コンテキスト共有マネージャー
+  // FutureContextSharingManagerはAbstractNodeで既に定義されているため、ここでは定義しない
 
   /** シナリオパーサから渡されるパラメータを受け取るコンストラクタ */
   public ForerunnerNode(
@@ -33,7 +48,7 @@ public class ForerunnerNode extends AbstractNode {
       boolean isChurn) {
     super(nodeID, numConn, region, miningPower, rtName, csName, useCBR, isChurn);
     this.fcm = new FutureContextManager(getParams()); // 空Mapでも動く
-    this.fcsm = new FutureContextSharingManager(this); // 未来コンテキスト共有マネージャーを初期化
+    // FutureContextSharingManagerはAbstractNodeのコンストラクタで既に初期化されているため、ここでは作成しない
   }
 
   /* ======= 受信イベント ======= */
@@ -44,15 +59,20 @@ public class ForerunnerNode extends AbstractNode {
 
     // Pre-play: 親ブロックは現 Tip とみなす
     // 実際のForerunner性能：投機的実行適用率99.15%（Perfect 87.19% + Imperfect 11.96%）
+    // 共有ON時のみ前処理（ベースラインでの余計な負荷を避ける）
+    boolean sharingEnabled =
+        Boolean.parseBoolean(System.getenv().getOrDefault("FORERUNNER_SHARING_ENABLED", "true"));
     double speculativeRate = simblock.settings.ForerunnerConfig.TOTAL_SPECULATIVE_RATE;
-    if (Math.random() < speculativeRate) {
+    if (sharingEnabled && Math.random() < speculativeRate) {
       ppm.preplay(getBlock(), tx);
     }
 
-    // 未来コンテキスト共有: トランザクションプールの変更を監視
-    List<Transaction> newTransactions = new ArrayList<>();
-    newTransactions.add(tx);
-    fcsm.onTransactionPoolUpdate(newTransactions);
+      // 未来コンテキスト共有: トランザクションプールの変更を監視
+      List<Transaction> newTransactions = new ArrayList<>();
+      newTransactions.add(tx);
+      if (sharingEnabled) {
+        getFutureContextSharingManager().onTransactionPoolUpdate(newTransactions);
+      }
 
     super.recvTxMessage(msg); // 既存処理（伝搬など）
   }
@@ -61,123 +81,163 @@ public class ForerunnerNode extends AbstractNode {
   public void recvBlockMessage(BlockMessage msg) {
     Block blk = msg.getBlock();
 
-    /* 1. Future Context 適用 */
-    FutureContextManager.Outcome oc = fcm.evaluate(blk);
-    double factorFC = simblock.forerunner.FutureContextManager.factor(oc);
+    // 🔍 デバッグ: ForerunnerNode処理開始
+    DebugLogger.debug(
+        String.format("🔥 ForerunnerNode %d: ブロック%d処理開始", this.getNodeID(), blk.getId()));
 
-    /* 2. Component Reuse */
-    double reuseCR = diffCache.applyReusableDiff(blk);
-    double factorCR = 1.0 - reuseCR * 0.8; // α = 0.8
+    /* 1. Future Context 適用（期待値定数に吸収） */
+    // FutureContextManager.Outcome oc = fcm.evaluate(blk);
+    // double factorFC = simblock.forerunner.FutureContextManager.factor(oc);
 
-    /* 3. 短い方（高速）を採用 */
-    double factor = Math.min(factorFC, factorCR);
+    /* 2. Component Reuse（期待値定数に吸収） */
+    // double reuseCR = diffCache.applyReusableDiff(blk);
+    // double factorCR = 1.0 - reuseCR * 0.8;
 
-    /* 4. Forerunner性能に基づく実行時間算出（予測精度ベース） */
-    long base = estimateBaseExecTime(blk);
+    /* 3. 詳細計算は期待値定数化で省略 */
+    // double factor = Math.min(factorFC, factorCR);
 
-    // 予測精度に基づくスピードアップ効果を適用
-    String predictionType = determinePredictionType(blk);
-    double speedupFactor = simblock.settings.ForerunnerConfig.getSpeedupFactor(predictionType);
+    /* 4. Forerunner性能に基づく実行時間算出（期待値定数で簡約） */
+    long base = BASE_EXEC_US;
 
-    // 予測精度に応じた処理時間の計算
-    long optimizedTime = (long) Math.floor(base / speedupFactor);
-    long normalTime = base;
+    // ノード種別別の計算速度係数（高速/低速）
+    simblock.forerunner.FutureContextSharingManager.NodeType nodeType =
+        this.getFutureContextSharingManager().getNodeType();
+    double nodeSpeedFactor = 1.0;
+    if (nodeType == simblock.forerunner.FutureContextSharingManager.NodeType.FORERUNNER_HIGH) {
+      nodeSpeedFactor = simblock.settings.SimulationConfiguration.HIGH_NODE_SPEED_FACTOR;
+    } else if (nodeType
+        == simblock.forerunner.FutureContextSharingManager.NodeType.FORERUNNER_LOW) {
+      nodeSpeedFactor = simblock.settings.SimulationConfiguration.LOW_NODE_SPEED_FACTOR;
+    }
 
-    // 予測精度に基づく重み付け平均
-    double perfectWeight = simblock.settings.ForerunnerConfig.PERFECT_PREDICTION_RATE;
-    double imperfectWeight = simblock.settings.ForerunnerConfig.IMPERFECT_PREDICTION_RATE;
-    double missedWeight = simblock.settings.ForerunnerConfig.MISSED_PREDICTION_RATE;
-
+    // 期待値（加重逆スピードアップ）で短縮
     long effectiveTime =
-        (long)
-            (perfectWeight * (base / simblock.settings.ForerunnerConfig.PERFECT_SPEEDUP)
-                + imperfectWeight * (base / simblock.settings.ForerunnerConfig.IMPERFECT_SPEEDUP)
-                + missedWeight * (base / simblock.settings.ForerunnerConfig.MISSED_SPEEDUP));
+        (long) Math.max(0L, Math.round(base * nodeSpeedFactor * WEIGHTED_INVERSE_SPEEDUP));
 
     // Forerunnerは処理時間を短縮するため、遅延ではなく処理時間の短縮として実装
     // μs→ms変換、最小遅延時間の制限を削除（スピードアップ効果を最大化）
-    long delay = effectiveTime / 1000;
+    // 実測ガイド: 平均 0.56ms/Tx, 平均160Tx, Forerunnerは平均8.39×高速化
+    // すでに base は μs 単位 (0.56ms=560μs) かつ speedup を反映しているため、そのまま μs→ms 変換
+    long delay = Math.max(0L, Math.round(effectiveTime / 1000.0));
 
-    /* 5. Forerunner性能に基づく即座処理 */
-    // 実際のForerunner性能に基づく処理
-    superRecvBlock(msg);
-    getFcm().generate(msg.getBlock());
+    // 🔍 デバッグ: 処理時間計算詳細
+    DebugLogger.debug(
+        String.format(
+            "🔥 Node %d 計算詳細: base=%dμs, effectiveTime=%dμs, delay=%dms",
+            this.getNodeID(), base, effectiveTime, delay));
 
-    // 未来コンテキスト共有: ブロック受信後の処理
-    fcsm.onTransactionPoolUpdate(msg.getBlock().getTxList());
-  }
+    // 📊 単一ノード処理時間ログ（Forerunner適用時）
+    DebugLogger.singleNodeProcTime(
+        this.getNodeID(), blk.getId(), delay, nodeType.toString(), blk.getMinter() == this);
 
-  /** ブロックの予測精度タイプを判定 実際のForerunnerの制約ベース投機実行を模擬 */
-  private String determinePredictionType(Block blk) {
-    // 制約集合（CD-Equiv）の満足度を判定
-    double constraintSatisfaction = evaluateConstraintSatisfaction(blk);
+    // 重要ログは抑制設定下では生成しない（DebugLogger側で抑止）
 
-    // 予測精度の判定（実際のデータに基づく）
-    if (constraintSatisfaction >= 0.95) {
-      return "PERFECT"; // 完全予測（87.19%）
-    } else if (constraintSatisfaction >= 0.70) {
-      return "IMPERFECT"; // 不完全予測（11.96%）
-    } else {
-      return "MISSED"; // 予測失敗（0.85%）
+    /* 5. Forerunner性能に基づく遅延処理（汎用タスクに統一） */
+    ExecutionDelayTask task =
+        new ExecutionDelayTask(this, delay) {
+          @Override
+          public void run() {
+            // 遅延完了 → 親処理へ
+            ForerunnerNode.this.superRecvBlock(msg);
+
+            boolean sharingEnabled =
+                Boolean.parseBoolean(
+                    System.getenv().getOrDefault("FORERUNNER_SHARING_ENABLED", "true"));
+
+            if (sharingEnabled) {
+              // 低速は待機/適用のみ（生成しない）、高速は生成
+              simblock.forerunner.FutureContextSharingManager.NodeType nt =
+                  ForerunnerNode.this.getFutureContextSharingManager().getNodeType();
+              if (nt == simblock.forerunner.FutureContextSharingManager.NodeType.FORERUNNER_HIGH) {
+                ForerunnerNode.this.getFcm().generate(msg.getBlock());
+              }
+            } else {
+              // 共有OFF時: 高速/低速とも自前生成
+              ForerunnerNode.this.getFcm().generate(msg.getBlock());
+            }
+          }
+        };
+    putTask(task);
+
+    // 未来コンテキスト共有: SHARE_ONLY_ON_TX=true の場合はブロック受信時の起動を抑止
+    boolean shareOnlyOnTx =
+        Boolean.parseBoolean(System.getenv().getOrDefault("FORERUNNER_SHARE_ONLY_ON_TX", "false"));
+      if (!shareOnlyOnTx) {
+      boolean sharingEnabled =
+          Boolean.parseBoolean(System.getenv().getOrDefault("FORERUNNER_SHARING_ENABLED", "true"));
+      if (sharingEnabled) {
+        getFutureContextSharingManager().onTransactionPoolUpdate(msg.getBlock().getTxList());
+      }
     }
   }
 
-  /** 制約集合（CD-Equiv）の満足度を評価 制御フローとデータ依存関係の同一性を判定 */
-  private double evaluateConstraintSatisfaction(Block blk) {
-    // 簡易的な制約満足度の評価
-    // 実際の実装では、より詳細な制約判定が必要
-
-    // トランザクション数に基づく制約満足度
-    int txCount = blk.getTxList().size();
-    double baseSatisfaction = 0.8; // ベース満足度
-
-    // トランザクション数が多いほど制約満足度が低下
-    if (txCount > 100) {
-      baseSatisfaction -= 0.1;
-    } else if (txCount > 50) {
-      baseSatisfaction -= 0.05;
-    }
-
-    // ランダム性を追加（実際の制約判定の不確実性を模擬）
-    double randomFactor = (Math.random() - 0.5) * 0.2; // ±10%のランダム性
-    double finalSatisfaction = Math.max(0.0, Math.min(1.0, baseSatisfaction + randomFactor));
-
-    return finalSatisfaction;
-  }
+  // 予測タイプ関連の詳細計算は期待値定数化により不要（維持しない）
 
   /* ======= ユーティリティ ======= */
 
-  /** ブロック実行の基準時間を近似計算（Tx 数 × 定数） */
-  private long estimateBaseExecTime(Block blk) {
-    long txNum = blk.getTxList().size();
-    // Ethereumの実際のトランザクション処理時間に基づく設定
-    // 複雑なトランザクションほどForerunnerの効果が大きい
-    long baseCost = ParamUtil.getLong(getParams(), "txBaseCost", 100); // 100µs/Tx
-    return txNum * baseCost;
-  }
+  // ブロック実行の基準時間は定数BASE_EXEC_USを使用（期待値化）
 
   // Getters
-  public FutureContextSharingManager getFutureContextSharingManager() {
-    return this.fcsm;
-  }
+  // getFutureContextSharingManager()はAbstractNodeで既に定義されているため、ここでは定義しない
 
   /* ========== 内部クラス: 遅延後にブロック処理を行う ========== */
   private static class DelayedBlockProcessTask extends ExecutionDelayTask {
 
     private final ForerunnerNode owner;
     private final BlockMessage msg;
+    private final long processingDelay;
 
     DelayedBlockProcessTask(ForerunnerNode owner, BlockMessage msg, long delay) {
       super(owner, delay); // ExecutionDelayTask(Node owner,long delay)
       this.owner = owner;
       this.msg = msg;
+      this.processingDelay = delay;
     }
 
     @Override
     public void run() {
       /* 遅延が終了したのでチェーンに組み込み & 新FC生成 */
+      // 🔍 デバッグ: 遅延処理完了
+      DebugLogger.debug(
+          String.format("🔥 Node %d: 遅延処理完了(%dms) → チェーン追加開始", owner.getNodeID(), processingDelay));
+
       owner.superRecvBlock(msg); // ★親クラスの既存処理を呼ぶ
-      owner.getFcm().generate(msg.getBlock());
+
+      boolean sharingEnabled =
+          Boolean.parseBoolean(System.getenv().getOrDefault("FORERUNNER_SHARING_ENABLED", "true"));
+
+      if (sharingEnabled) {
+        // Forerunner低速ノードの場合、共有された未来コンテキストをチェック
+        if (owner.getFutureContextSharingManager().getNodeType()
+            == simblock.forerunner.FutureContextSharingManager.NodeType.FORERUNNER_LOW) {
+
+          long blockIndex = msg.getBlock().getIndex();
+
+          // 共有された未来コンテキストがあるかチェック
+          simblock.forerunner.EnhancedFutureContext sharedContext =
+              owner.getFutureContextSharingManager().getFutureContext(blockIndex);
+
+          if (sharedContext != null) {
+            // 共有された未来コンテキストを適用
+            DebugLogger.debug(
+                String.format(
+                    "🔥 Node %d: 共有された未来コンテキストを適用 (block=%d)", owner.getNodeID(), blockIndex));
+          } else {
+            // 共有が来ない場合は通常のForerunner未適用低速ノードと同様の処理
+            DebugLogger.debug(
+                String.format("🔥 Node %d: 共有なし → 通常処理 (block=%d)", owner.getNodeID(), blockIndex));
+          }
+        } else {
+          // Forerunner高速ノードは従来通り未来コンテキストを生成
+          owner.getFcm().generate(msg.getBlock());
+        }
+      } else {
+        // 共有OFF時: 高速/低速いずれのForerunnerノードも自身で未来コンテキストを生成
+        owner.getFcm().generate(msg.getBlock());
+      }
+
+      // 🔍 デバッグ: チェーン追加完了
+      DebugLogger.debug(String.format("🔥 Node %d: チェーン追加完了 → 伝播開始", owner.getNodeID()));
     }
   }
 
@@ -189,5 +249,11 @@ public class ForerunnerNode extends AbstractNode {
   /* ========== Getter (内部クラス用) ========== */
   private FutureContextManager getFcm() {
     return this.fcm;
+  }
+
+  /* ========== タスクスケジューリング ========== */
+  private void addTask(DelayedBlockProcessTask task) {
+    // タスクを実行スケジューラに追加（Timer.putTaskを使用）
+    putTask(task);
   }
 }

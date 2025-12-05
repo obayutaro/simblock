@@ -51,8 +51,10 @@ public class FutureContextShareTask implements Task {
         receiverManager.receiveSharedContext(context, sender);
 
         // 未来コンテキスト共有のデバッグ情報
-        DebugLogger.nodeDebug(sender.getNodeID(), 
-            String.format("未来コンテキスト共有: %s -> %s (ブロック%d, 信頼度%.2f%%)",
+        DebugLogger.nodeDebug(
+            sender.getNodeID(),
+            String.format(
+                "未来コンテキスト共有: %s -> %s (ブロック%d, 信頼度%.2f%%)",
                 sender.getNodeID(),
                 receiver.getNodeID(),
                 context.getBlockIndex(),

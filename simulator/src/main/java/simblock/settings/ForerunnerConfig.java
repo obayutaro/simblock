@@ -45,10 +45,10 @@ public final class ForerunnerConfig {
     try {
       String v =
           System.getProperty(
-              "forerunner.ratio", System.getenv().getOrDefault("FORERUNNER_RATIO", "0"));
+              "forerunner.ratio", System.getenv().getOrDefault("FORERUNNER_RATIO", "0.3"));
       r = Double.parseDouble(v);
     } catch (Exception ignored) {
-      r = 0.0;
+      r = 0.3; // デフォルトで30%のノードをForerunnerノードとする
     }
     if (r < 0.0) r = 0.0;
     if (r > 1.0) r = 1.0;
@@ -58,10 +58,10 @@ public final class ForerunnerConfig {
     try {
       String v =
           System.getProperty(
-              "forerunner.seed", System.getenv().getOrDefault("FORERUNNER_SEED", "0"));
+              "forerunner.seed", System.getenv().getOrDefault("FORERUNNER_SEED", "12345"));
       s = Long.parseLong(v);
     } catch (Exception ignored) {
-      s = 0L;
+      s = 12345L; // デフォルトシード値
     }
     SEED = s;
   }
@@ -101,17 +101,29 @@ public final class ForerunnerConfig {
     }
   }
 
+  /** Forerunner設定情報を出力 */
+  public static void printSettings() {
+    DebugLogger.printConfig(
+        "Forerunner 設定",
+        String.format("FORERUNNER_RATIO: %.2f (%.1f%% of nodes)", RATIO, RATIO * 100),
+        String.format("FORERUNNER_SEED: %d", SEED),
+        String.format("Enabled: %s", enabled() ? "YES" : "NO"));
+  }
+
   /** 予測精度の統計情報を出力 */
   public static void printPredictionStats() {
-    DebugLogger.printStats("Forerunner 予測統計",
-        String.format("Perfect Prediction: %.2f%% (Speedup: %.2f×)", 
+    DebugLogger.printStats(
+        "Forerunner 予測統計",
+        String.format(
+            "Perfect Prediction: %.2f%% (Speedup: %.2f×)",
             PERFECT_PREDICTION_RATE * 100, PERFECT_SPEEDUP),
-        String.format("Imperfect Prediction: %.2f%% (Speedup: %.2f×)", 
+        String.format(
+            "Imperfect Prediction: %.2f%% (Speedup: %.2f×)",
             IMPERFECT_PREDICTION_RATE * 100, IMPERFECT_SPEEDUP),
-        String.format("Missed Prediction: %.2f%% (Speedup: %.2f×)", 
+        String.format(
+            "Missed Prediction: %.2f%% (Speedup: %.2f×)",
             MISSED_PREDICTION_RATE * 100, MISSED_SPEEDUP),
         String.format("Total Speculative Rate: %.2f%%", TOTAL_SPECULATIVE_RATE * 100),
-        String.format("Constraint Satisfaction Rate: %.2f%%", CONSTRAINT_SATISFACTION_RATE * 100)
-    );
+        String.format("Constraint Satisfaction Rate: %.2f%%", CONSTRAINT_SATISFACTION_RATE * 100));
   }
 }

@@ -67,7 +67,24 @@ public class SimulationConfiguration {
 
   /** Block size. (unit: byte). */
   // public static final long BLOCK_SIZE = 535000; // 6110;//8000;//535000;//0.5MB
-  public static final long BLOCK_SIZE = 50 * 1024; // Ethereum平均ブロックサイズ（50KB）に調整
+  public static final long BLOCK_SIZE = 120 * 1024; // 120KB
+
+  /** Base processing time for block validation and transaction processing. (unit: millisecond) */
+  public static final long BASE_PROCESSING_TIME = 1500; // パラメータ変更前の状態に戻す（1.5秒）
+
+  /** ノード計算速度係数（高速/低速） */
+  public static final double HIGH_NODE_SPEED_FACTOR = 1.0; // 高速ノードは半分の時間
+
+  public static final double LOW_NODE_SPEED_FACTOR = 8.0; // 低速ノードは8倍の時間
+
+  /** Block propagation processing time (chain addition and re-propagation). (unit: millisecond) */
+  public static final long PROPAGATION_PROCESSING_TIME = 100; // チェーン適用・再伝播時間（0.1秒）
+
+  /** Base transaction processing time. (unit: microsecond) */
+  public static final long TX_PROCESSING_TIME = 20000; // 20ms/Tx
+
+  /** 実装上Txが存在しないときに用いる仮定Tx数（ブロック平均） */
+  public static final int ASSUMED_TX_PER_BLOCK = 25;
 
   /** The usage rate of compact block relay (CBR) protocol. */
   public static final float CBR_USAGE_RATE = 0;

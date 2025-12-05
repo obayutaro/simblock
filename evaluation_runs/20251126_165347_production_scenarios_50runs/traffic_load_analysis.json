@@ -1,0 +1,542 @@
+[
+  {
+    "scenario": "P100_10_OFF",
+    "total_runs": 50,
+    "data_count": 0,
+    "no_data_count": 50,
+    "note": "データなし"
+  },
+  {
+    "scenario": "P100_10_ON",
+    "total_runs": 50,
+    "data_count": 50,
+    "no_data_count": 0,
+    "bandwidth_usage": {
+      "max_bps": {
+        "max": 2936340480,
+        "min": 717619200,
+        "mean": 2278352486.4,
+        "median": 2379939840
+      },
+      "avg_bps": {
+        "max": 537042911,
+        "min": 184887138,
+        "mean": 494149243.18,
+        "median": 505980554
+      },
+      "min_bps": {
+        "max": 5898240,
+        "min": 983040,
+        "mean": 1808793.6,
+        "median": 983040
+      }
+    },
+    "utilization": {
+      "max": 2.0635654601344857,
+      "min": 0.7104212795389049,
+      "mean": 1.89874829271854,
+      "median": 1.9442096215177715
+    },
+    "duration": {
+      "max": null,
+      "min": null,
+      "mean": null,
+      "median": null
+    }
+  },
+  {
+    "scenario": "P100_50_OFF",
+    "total_runs": 50,
+    "data_count": 0,
+    "no_data_count": 50,
+    "note": "データなし"
+  },
+  {
+    "scenario": "P100_50_ON",
+    "total_runs": 50,
+    "data_count": 37,
+    "no_data_count": 13,
+    "bandwidth_usage": {
+      "max_bps": {
+        "max": 2749562880,
+        "min": 720568320,
+        "mean": 1942673020.5405405,
+        "median": 2109603840
+      },
+      "avg_bps": {
+        "max": 537958809,
+        "min": 184784587,
+        "mean": 432652005.9459459,
+        "median": 476871538
+      },
+      "min_bps": {
+        "max": 4915200,
+        "min": 983040,
+        "mean": 1833236.7567567567,
+        "median": 983040
+      }
+    },
+    "utilization": {
+      "max": 2.0670847608069165,
+      "min": 0.7100272315081652,
+      "mean": 1.6624476693408108,
+      "median": 1.8323594159462058
+    },
+    "duration": {
+      "max": null,
+      "min": null,
+      "mean": null,
+      "median": null
+    }
+  },
+  {
+    "scenario": "P100_90_OFF",
+    "total_runs": 50,
+    "data_count": 0,
+    "no_data_count": 50,
+    "note": "データなし"
+  },
+  {
+    "scenario": "P100_90_ON",
+    "total_runs": 50,
+    "data_count": 12,
+    "no_data_count": 38,
+    "bandwidth_usage": {
+      "max_bps": {
+        "max": 2570649600,
+        "min": 345047040,
+        "mean": 1331036160.0,
+        "median": 1422458880
+      },
+      "avg_bps": {
+        "max": 500737445,
+        "min": 85263360,
+        "mean": 315619123.8333333,
+        "median": 332645315
+      },
+      "min_bps": {
+        "max": 6881280,
+        "min": 983040,
+        "mean": 2375680.0,
+        "median": 1966080
+      }
+    },
+    "utilization": {
+      "max": 1.9240631892411142,
+      "min": 0.3276209798270893,
+      "mean": 1.2127535978226065,
+      "median": 1.278176042267051
+    },
+    "duration": {
+      "max": null,
+      "min": null,
+      "mean": null,
+      "median": null
+    }
+  },
+  {
+    "scenario": "P10_10_OFF",
+    "total_runs": 50,
+    "data_count": 0,
+    "no_data_count": 50,
+    "note": "データなし"
+  },
+  {
+    "scenario": "P10_10_ON",
+    "total_runs": 50,
+    "data_count": 50,
+    "no_data_count": 0,
+    "bandwidth_usage": {
+      "max_bps": {
+        "max": 611450880,
+        "min": 38338560,
+        "mean": 432635904.0,
+        "median": 452198400
+      },
+      "avg_bps": {
+        "max": 135201976,
+        "min": 14779792,
+        "mean": 115649233.86,
+        "median": 118687376
+      },
+      "min_bps": {
+        "max": 5898240,
+        "min": 983040,
+        "mean": 2614886.4,
+        "median": 2949120
+      }
+    },
+    "utilization": {
+      "max": 0.5195080730067243,
+      "min": 0.056790747358309315,
+      "mean": 0.44437745959654196,
+      "median": 0.4560513967339097
+    },
+    "duration": {
+      "max": null,
+      "min": null,
+      "mean": null,
+      "median": null
+    }
+  },
+  {
+    "scenario": "P10_50_OFF",
+    "total_runs": 50,
+    "data_count": 0,
+    "no_data_count": 50,
+    "note": "データなし"
+  },
+  {
+    "scenario": "P10_50_ON",
+    "total_runs": 50,
+    "data_count": 37,
+    "no_data_count": 13,
+    "bandwidth_usage": {
+      "max_bps": {
+        "max": 574095360,
+        "min": 38338560,
+        "mean": 323313885.4054054,
+        "median": 387317760
+      },
+      "avg_bps": {
+        "max": 137064525,
+        "min": 14389671,
+        "mean": 90508292.48648648,
+        "median": 112978750
+      },
+      "min_bps": {
+        "max": 5898240,
+        "min": 983040,
+        "mean": 2258335.135135135,
+        "median": 1966080
+      }
+    },
+    "utilization": {
+      "max": 0.5266648414985591,
+      "min": 0.05529172334293948,
+      "mean": 0.34777441877612486,
+      "median": 0.43411623439000957
+    },
+    "duration": {
+      "max": null,
+      "min": null,
+      "mean": null,
+      "median": null
+    }
+  },
+  {
+    "scenario": "P10_90_OFF",
+    "total_runs": 50,
+    "data_count": 0,
+    "no_data_count": 50,
+    "note": "データなし"
+  },
+  {
+    "scenario": "P10_90_ON",
+    "total_runs": 50,
+    "data_count": 12,
+    "no_data_count": 38,
+    "bandwidth_usage": {
+      "max_bps": {
+        "max": 438435840,
+        "min": 24576000,
+        "mean": 184975360.0,
+        "median": 142540800
+      },
+      "avg_bps": {
+        "max": 127579195,
+        "min": 11339025,
+        "mean": 52877338.5,
+        "median": 48644793
+      },
+      "min_bps": {
+        "max": 3932160,
+        "min": 983040,
+        "mean": 2048000.0,
+        "median": 1966080
+      }
+    },
+    "utilization": {
+      "max": 0.49021784822286263,
+      "min": 0.04356974063400577,
+      "mean": 0.20317901440922195,
+      "median": 0.18691563112391932
+    },
+    "duration": {
+      "max": null,
+      "min": null,
+      "mean": null,
+      "median": null
+    }
+  },
+  {
+    "scenario": "P40_10_OFF",
+    "total_runs": 50,
+    "data_count": 0,
+    "no_data_count": 50,
+    "note": "データなし"
+  },
+  {
+    "scenario": "P40_10_ON",
+    "total_runs": 50,
+    "data_count": 50,
+    "no_data_count": 0,
+    "bandwidth_usage": {
+      "max_bps": {
+        "max": 1633812480,
+        "min": 153354240,
+        "mean": 1313243136.0,
+        "median": 1343815680
+      },
+      "avg_bps": {
+        "max": 325727294,
+        "min": 53090228,
+        "mean": 295869579.12,
+        "median": 307498767
+      },
+      "min_bps": {
+        "max": 4915200,
+        "min": 983040,
+        "mean": 2260992.0,
+        "median": 1966080
+      }
+    },
+    "utilization": {
+      "max": 1.2515938290105668,
+      "min": 0.20399703362151775,
+      "mean": 1.1368667785590778,
+      "median": 1.1815514582132565
+    },
+    "duration": {
+      "max": null,
+      "min": null,
+      "mean": null,
+      "median": null
+    }
+  },
+  {
+    "scenario": "P40_50_OFF",
+    "total_runs": 50,
+    "data_count": 0,
+    "no_data_count": 50,
+    "note": "データなし"
+  },
+  {
+    "scenario": "P40_50_ON",
+    "total_runs": 50,
+    "data_count": 37,
+    "no_data_count": 13,
+    "bandwidth_usage": {
+      "max_bps": {
+        "max": 1717370880,
+        "min": 144506880,
+        "mean": 1063516436.7567568,
+        "median": 1119682560
+      },
+      "avg_bps": {
+        "max": 321777763,
+        "min": 50061169,
+        "mean": 243400044.75675675,
+        "median": 285857485
+      },
+      "min_bps": {
+        "max": 6881280,
+        "min": 983040,
+        "mean": 2178629.189189189,
+        "median": 1966080
+      }
+    },
+    "utilization": {
+      "max": 1.2364179173871277,
+      "min": 0.1923579980787704,
+      "mean": 0.9352547348962793,
+      "median": 1.098395715658021
+    },
+    "duration": {
+      "max": null,
+      "min": null,
+      "mean": null,
+      "median": null
+    }
+  },
+  {
+    "scenario": "P40_90_OFF",
+    "total_runs": 50,
+    "data_count": 0,
+    "no_data_count": 50,
+    "note": "データなし"
+  },
+  {
+    "scenario": "P40_90_ON",
+    "total_runs": 50,
+    "data_count": 12,
+    "no_data_count": 38,
+    "bandwidth_usage": {
+      "max_bps": {
+        "max": 1334968320,
+        "min": 75694080,
+        "mean": 641024000.0,
+        "median": 684195840
+      },
+      "avg_bps": {
+        "max": 317337844,
+        "min": 27736746,
+        "mean": 157032346.91666666,
+        "median": 170471762
+      },
+      "min_bps": {
+        "max": 4915200,
+        "min": 983040,
+        "mean": 1802240.0,
+        "median": 983040
+      }
+    },
+    "utilization": {
+      "max": 1.2193577098943322,
+      "min": 0.10657731412103746,
+      "mean": 0.6033903820044828,
+      "median": 0.6550307857829011
+    },
+    "duration": {
+      "max": null,
+      "min": null,
+      "mean": null,
+      "median": null
+    }
+  },
+  {
+    "scenario": "P70_10_OFF",
+    "total_runs": 50,
+    "data_count": 0,
+    "no_data_count": 50,
+    "note": "データなし"
+  },
+  {
+    "scenario": "P70_10_ON",
+    "total_runs": 50,
+    "data_count": 50,
+    "no_data_count": 0,
+    "bandwidth_usage": {
+      "max_bps": {
+        "max": 2461532160,
+        "min": 320471040,
+        "mean": 1879985356.8,
+        "median": 1964113920
+      },
+      "avg_bps": {
+        "max": 438173165,
+        "min": 102245522,
+        "mean": 400600514.92,
+        "median": 408284333
+      },
+      "min_bps": {
+        "max": 5898240,
+        "min": 983040,
+        "mean": 2103705.6,
+        "median": 983040
+      }
+    },
+    "utilization": {
+      "max": 1.683662497598463,
+      "min": 0.39287424399615756,
+      "mean": 1.5392911236119118,
+      "median": 1.5688158808837658
+    },
+    "duration": {
+      "max": null,
+      "min": null,
+      "mean": null,
+      "median": null
+    }
+  },
+  {
+    "scenario": "P70_50_OFF",
+    "total_runs": 50,
+    "data_count": 0,
+    "no_data_count": 50,
+    "note": "データなし"
+  },
+  {
+    "scenario": "P70_50_ON",
+    "total_runs": 50,
+    "data_count": 37,
+    "no_data_count": 13,
+    "bandwidth_usage": {
+      "max_bps": {
+        "max": 2324889600,
+        "min": 367656960,
+        "mean": 1554983299.4594595,
+        "median": 1822556160
+      },
+      "avg_bps": {
+        "max": 436679001,
+        "min": 107117294,
+        "mean": 346874689.6756757,
+        "median": 405591175
+      },
+      "min_bps": {
+        "max": 5898240,
+        "min": 983040,
+        "mean": 2019217.2972972973,
+        "median": 983040
+      }
+    },
+    "utilization": {
+      "max": 1.677921233429395,
+      "min": 0.41159382901056674,
+      "mean": 1.332851833528053,
+      "median": 1.558467531219981
+    },
+    "duration": {
+      "max": null,
+      "min": null,
+      "mean": null,
+      "median": null
+    }
+  },
+  {
+    "scenario": "P70_90_OFF",
+    "total_runs": 50,
+    "data_count": 0,
+    "no_data_count": 50,
+    "note": "データなし"
+  },
+  {
+    "scenario": "P70_90_ON",
+    "total_runs": 50,
+    "data_count": 12,
+    "no_data_count": 38,
+    "bandwidth_usage": {
+      "max_bps": {
+        "max": 1981808640,
+        "min": 163184640,
+        "mean": 1064058880.0,
+        "median": 1189478400
+      },
+      "avg_bps": {
+        "max": 439711785,
+        "min": 47924654,
+        "mean": 240120380.66666666,
+        "median": 257493312
+      },
+      "min_bps": {
+        "max": 3932160,
+        "min": 983040,
+        "mean": 2293760.0,
+        "median": 1966080
+      }
+    },
+    "utilization": {
+      "max": 1.689574582132565,
+      "min": 0.18414852641690682,
+      "mean": 0.9226527595260968,
+      "median": 0.9894075389048992
+    },
+    "duration": {
+      "max": null,
+      "min": null,
+      "mean": null,
+      "median": null
+    }
+  }
+]

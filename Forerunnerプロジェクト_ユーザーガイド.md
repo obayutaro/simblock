@@ -133,6 +133,18 @@ recvBlockMessage() {
 
 ## 🔧 パラメータ設定
 
+### 処理時間の現実化（2025年1月修正）
+
+#### 修正内容
+- **基本処理時間**: 2ms → 200ms（100倍の現実化）
+- **トランザクション処理時間**: 100µs/Tx → 5000µs/Tx（50倍の現実化）
+- **伝播速度**: ForerunnerNodeと通常ノードで統一（承認時間のみ短縮）
+
+#### 修正理由
+- 実際のEthereumブロック処理時間（130-650ms）に近づける
+- 実際のトランザクション処理時間（1-500ms）に近づける
+- Forerunnerの本来の目的（承認時間短縮）を正確にシミュレーション
+
 ### 環境変数による設定
 
 #### Forerunner適用率
@@ -166,6 +178,8 @@ export BROADCAST_SCOPE=NEIGHBORS_ONLY
 | `END_BLOCK_HEIGHT` | 50 | 終了ブロック高 |
 | `BLOCK_SIZE` | 50KB | ブロックサイズ |
 | `AVERAGE_MINING_POWER` | 800000 | 平均マイニングパワー |
+| `BASE_PROCESSING_TIME` | 200ms | 基本ブロック処理時間 |
+| `TX_PROCESSING_TIME` | 5000µs | 基本トランザクション処理時間 |
 
 #### Forerunner設定（ForerunnerConfig.java）
 | パラメータ | 値 | 説明 |

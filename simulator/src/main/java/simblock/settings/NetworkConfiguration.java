@@ -105,7 +105,7 @@ public class NetworkConfiguration {
    * List of download bandwidth assigned to each region. (unit: bit per second) for year 2024 修正版
    */
   private static final long[] DOWNLOAD_BANDWIDTH_2024_REVISED = {
-    185000000, 123000000, 147000000, 135000000, 84000000, 154000000, 8 * 1000000
+    50000000, 40000000, 30000000, 35000000, 25000000, 45000000, 2 * 1000000 // パラメータ変更前の状態に戻す（2Mbps）
   };
 
   /**
@@ -135,9 +135,28 @@ public class NetworkConfiguration {
     36000000, 36000000, 54000000, 49000000, 23000000, 20000000, 6 * 1000000
   };
 
-  /** List of upload bandwidth assigned to each region. (unit: bit per second) for year 2024 修正版 */
+  /**
+   * List of upload bandwidth assigned to each region. (unit: bit per second) for year 2024
+   * 現実的Ethereum版
+   */
   private static final long[] UPLOAD_BANDWIDTH_2024_REVISED = {
-    36000000, 36000000, 54000000, 49000000, 23000000, 20000000, 8 * 1000000
+    15000000, 12000000, 10000000, 12000000, 8000000, 15000000, 1 * 1000000 // パラメータ変更前の状態に戻す（1Mbps）
+  };
+
+  /**
+   * List of download bandwidth assigned to each region. (unit: bit per second) for year 2024
+   * 現実的Ethereum版
+   */
+  private static final long[] DOWNLOAD_BANDWIDTH_2024_REALISTIC = {
+    30000000, 25000000, 20000000, 22000000, 15000000, 28000000, 1 * 1000000
+  };
+
+  /**
+   * List of upload bandwidth assigned to each region. (unit: bit per second) for year 2024
+   * 現実的Ethereum版
+   */
+  private static final long[] UPLOAD_BANDWIDTH_2024_REALISTIC = {
+    8000000, 6000000, 5000000, 6000000, 4000000, 8000000, 500000
   };
 
   /**
@@ -182,6 +201,11 @@ public class NetworkConfiguration {
   /** 地域分布イーサリアム 2025 修正版（より現実的で均衡の取れた分布） */
   private static final double[] REGION_DISTRIBUTION_ETHEREUM_2025_REVISED = {
     0.32, 0.28, 0.08, 0.28, 0.02, 0.02
+  };
+
+  /** 地域分布イーサリアム 2025 現実的版（実際のEthereumネットワーク分布） */
+  private static final double[] REGION_DISTRIBUTION_ETHEREUM_2025_REALISTIC = {
+    0.35, 0.25, 0.15, 0.20, 0.03, 0.02
   };
 
   /** Region distribution Bitcoin 2024. */
@@ -230,11 +254,34 @@ public class NetworkConfiguration {
   };
 
   /**
+   * The cumulative distribution of number of outbound links for High-Performance Network (25-50
+   * connections)
+   */
+  private static final double[] DEGREE_DISTRIBUTION_HIGH_PERFORMANCE = {
+    0.02, 0.04, 0.06, 0.08, 0.12, 0.16, 0.22, 0.28, 0.36, 0.44, 0.52, 0.60, 0.68, 0.76, 0.82, 0.86,
+    0.90, 0.93, 0.95, 0.96, 0.97, 0.98, 0.985, 0.99, 0.992, 0.994, 0.995, 0.996, 0.997, 0.998,
+    0.9985, 0.999, 0.9992, 0.9994, 0.9995, 0.9996, 0.9997, 0.9998, 0.9999, 0.99992, 0.99994,
+    0.99996, 0.99997, 0.99998, 0.99999, 0.999992, 0.999994, 0.999996, 0.999998, 1.0
+  };
+
+  /**
    * The cumulative distribution of number of outbound links. Cf. Andrew Miller et al., "Discovering
    * bitcoin's public topology and influential nodes", 2015.
    */
-  public static double[] DEGREE_DISTRIBUTION =
-      DEGREE_DISTRIBUTION_ETHEREUM_REVISED; // Ethereumネットワークの特性に合わせて調整
+  // 平均接続数を約4にする累積分布（度数0..8）
+  private static final double[] DEGREE_DISTRIBUTION_AVG4 = {
+    0.02, // 0
+    0.07, // 1
+    0.17, // 2
+    0.35, // 3
+    0.65, // 4
+    0.83, // 5
+    0.93, // 6
+    0.98, // 7
+    1.00 // 8
+  };
+
+  public static double[] DEGREE_DISTRIBUTION = DEGREE_DISTRIBUTION_AVG4; // 平均4接続
 
   /** ネットワーク設定を動的に調整するメソッド 環境変数による設定変更に対応 */
   public static void initializeNetworkSettings() {
@@ -251,6 +298,8 @@ public class NetworkConfiguration {
       REGION_DISTRIBUTION = REGION_DISTRIBUTION_ETHEREUM_2025;
     } else if ("ETHEREUM_2025_REVISED".equals(regionDistributionType)) {
       REGION_DISTRIBUTION = REGION_DISTRIBUTION_ETHEREUM_2025_REVISED;
+    } else if ("ETHEREUM_2025_REALISTIC".equals(regionDistributionType)) {
+      REGION_DISTRIBUTION = REGION_DISTRIBUTION_ETHEREUM_2025_REALISTIC;
     }
 
     // 遅延の設定
@@ -266,18 +315,25 @@ public class NetworkConfiguration {
     if ("2024_REVISED".equals(bandwidthType)) {
       DOWNLOAD_BANDWIDTH = DOWNLOAD_BANDWIDTH_2024_REVISED;
       UPLOAD_BANDWIDTH = UPLOAD_BANDWIDTH_2024_REVISED;
+    } else if ("2024_REALISTIC".equals(bandwidthType)) {
+      DOWNLOAD_BANDWIDTH = DOWNLOAD_BANDWIDTH_2024_REALISTIC;
+      UPLOAD_BANDWIDTH = UPLOAD_BANDWIDTH_2024_REALISTIC;
     } else if ("2024".equals(bandwidthType)) {
       DOWNLOAD_BANDWIDTH = DOWNLOAD_BANDWIDTH_2024;
       UPLOAD_BANDWIDTH = UPLOAD_BANDWIDTH_2024;
     }
 
     // 接続数分布の設定
-    if ("ETHEREUM_REVISED".equals(degreeDistributionType)) {
+    if ("HIGH_PERFORMANCE".equals(degreeDistributionType)) {
+      DEGREE_DISTRIBUTION = DEGREE_DISTRIBUTION_HIGH_PERFORMANCE;
+    } else if ("ETHEREUM_REVISED".equals(degreeDistributionType)) {
       DEGREE_DISTRIBUTION = DEGREE_DISTRIBUTION_ETHEREUM_REVISED;
     } else if ("ETHEREUM".equals(degreeDistributionType)) {
       DEGREE_DISTRIBUTION = DEGREE_DISTRIBUTION_ETHEREUM;
     } else if ("BITCOIN_2015".equals(degreeDistributionType)) {
       DEGREE_DISTRIBUTION = DEGREE_DISTRIBUTION_BITCOIN_2015;
+    } else if ("AVG4".equals(degreeDistributionType)) {
+      DEGREE_DISTRIBUTION = DEGREE_DISTRIBUTION_AVG4;
     }
 
     // 設定の検証とログ出力
@@ -286,12 +342,12 @@ public class NetworkConfiguration {
 
   /** ネットワーク設定の検証とログ出力 */
   private static void validateAndLogSettings() {
-    DebugLogger.printConfig("ネットワーク設定",
+    DebugLogger.printConfig(
+        "ネットワーク設定",
         "Region Distribution: " + getRegionDistributionName(),
         "Latency Type: " + getLatencyTypeName(),
         "Bandwidth Type: " + getBandwidthTypeName(),
-        "Degree Distribution: " + getDegreeDistributionTypeName()
-    );
+        "Degree Distribution: " + getDegreeDistributionTypeName());
 
     // 設定の妥当性チェック
     validateSettings();
@@ -354,9 +410,12 @@ public class NetworkConfiguration {
   }
 
   private static String getDegreeDistributionTypeName() {
+    if (DEGREE_DISTRIBUTION == DEGREE_DISTRIBUTION_HIGH_PERFORMANCE)
+      return "HIGH_PERFORMANCE (25-50 connections)";
     if (DEGREE_DISTRIBUTION == DEGREE_DISTRIBUTION_ETHEREUM_REVISED) return "ETHEREUM_REVISED";
     if (DEGREE_DISTRIBUTION == DEGREE_DISTRIBUTION_ETHEREUM) return "ETHEREUM";
     if (DEGREE_DISTRIBUTION == DEGREE_DISTRIBUTION_BITCOIN_2015) return "BITCOIN_2015";
+    if (DEGREE_DISTRIBUTION == DEGREE_DISTRIBUTION_AVG4) return "AVG4 (~4 connections)";
     return "UNKNOWN";
   }
 }

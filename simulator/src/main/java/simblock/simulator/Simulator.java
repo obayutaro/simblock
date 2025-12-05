@@ -19,6 +19,7 @@ package simblock.simulator;
 import static simblock.simulator.Timer.getCurrentTime;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import simblock.block.Block;
@@ -110,6 +111,13 @@ public class Simulator {
       new ArrayList<>();
 
   /**
+   * A map to track the last arrival time of each block at each node. Used to calculate hop-by-hop
+   * delays.
+   */
+  private static final HashMap<Integer, HashMap<Integer, Long>> blockLastArrivalTime =
+      new HashMap<>();
+
+  /**
    * Handle the arrival of a new block. For every observed block, propagation information is
    * updated, and for a new block propagation information is created.
    *
@@ -137,9 +145,12 @@ public class Simulator {
       if (observedBlocks.size() > 10) {
         // After the observed blocks limit is reached, log and remove old blocks by FIFO
         // principle
-        printPropagation(observedBlocks.get(0), observedPropagations.get(0));
+        Block oldBlock = observedBlocks.get(0);
+        printPropagation(oldBlock, observedPropagations.get(0));
         observedBlocks.remove(0);
         observedPropagations.remove(0);
+        // ホップ遅延記録もクリーンアップ
+        blockLastArrivalTime.remove(oldBlock.getId());
       }
       // If the block has not been seen by any node and there is additional memory
       LinkedHashMap<Integer, Long> propagation = new LinkedHashMap<>();
@@ -160,19 +171,58 @@ public class Simulator {
 
   /** ブロック伝播統計の初期化 */
   private static void initializePropagationStatistics(Block block, long delta, Node node) {
+    // 初回ホップ遅延の記録
+    long hopDelay = calculateHopDelay(block, node);
+
     // 統計情報の初期化（実際の実装ではより詳細な統計を記録）
-    DebugLogger.blockDebug(String.valueOf(block.getId()), 
-        String.format("伝播開始: ノード%d, 遅延%dms, 高さ%d", 
-            node.getNodeID(), delta, block.getHeight()));
+    DebugLogger.blockDebug(
+        String.valueOf(block.getId()),
+        String.format(
+            "伝播開始: ノード%d, 遅延%dms, ホップ遅延%dms, 高さ%d",
+            node.getNodeID(), delta, hopDelay, block.getHeight()));
   }
 
   /** ブロック伝播統計の更新 */
   private static void updatePropagationStatistics(Block block, long delta, Node node) {
-    // 統計情報の更新（実際の実装ではより詳細な統計を記録）
+    // ホップ間遅延の計算
+    long hopDelay = calculateHopDelay(block, node);
+
+    // 統計情報の更新（ホップ間遅延も記録）
     if (delta > 0) {
-      DebugLogger.blockDebug(String.valueOf(block.getId()), 
-          String.format("伝播完了: ノード%d, 総遅延%dms", node.getNodeID(), delta));
+      DebugLogger.blockDebug(
+          String.valueOf(block.getId()),
+          String.format("伝播完了: ノード%d, 総遅延%dms, ホップ遅延%dms", node.getNodeID(), delta, hopDelay));
     }
+  }
+
+  /** ホップ間遅延を計算 */
+  private static long calculateHopDelay(Block block, Node node) {
+    int blockId = block.getId();
+    int nodeId = node.getNodeID();
+    long currentTime = getCurrentTime();
+
+    // ブロックのマップを取得または作成
+    HashMap<Integer, Long> nodeArrivalTimes =
+        blockLastArrivalTime.computeIfAbsent(blockId, k -> new HashMap<>());
+
+    // 前回の到着時刻を取得
+    Long lastArrivalTime = nodeArrivalTimes.get(nodeId);
+    long hopDelay;
+
+    if (lastArrivalTime == null) {
+      // 初回到着の場合、ブロック生成時刻からの遅延
+      hopDelay = currentTime - block.getTime();
+      if (hopDelay < 0) hopDelay = 0;
+    } else {
+      // 2回目以降の場合、前回到着からの差分（実際のホップ間遅延）
+      hopDelay = currentTime - lastArrivalTime;
+      if (hopDelay < 0) hopDelay = 0;
+    }
+
+    // 到着時刻を更新
+    nodeArrivalTimes.put(nodeId, currentTime);
+
+    return hopDelay;
   }
 
   /**

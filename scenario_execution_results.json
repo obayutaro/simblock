@@ -1,0 +1,181 @@
+{
+  "execution_info": {
+    "start_time": "2025-10-09T15:54:10.942899",
+    "total_scenarios": 24,
+    "environment": "Windows",
+    "end_time": "2025-10-09T15:57:08.372519",
+    "success_count": 24,
+    "failure_count": 0,
+    "success_rate": 100.0
+  },
+  "scenarios": {
+    "scenario_a1": {
+      "forerunner_ratio": 0.1,
+      "slow_node_ratio": 0.5,
+      "success": true,
+      "log_file": "scenario_a1_results.log",
+      "execution_time": "2025-10-09T15:54:13.159948"
+    },
+    "scenario_a2": {
+      "forerunner_ratio": 0.3,
+      "slow_node_ratio": 0.5,
+      "success": true,
+      "log_file": "scenario_a2_results.log",
+      "execution_time": "2025-10-09T15:54:20.717302"
+    },
+    "scenario_a3": {
+      "forerunner_ratio": 0.5,
+      "slow_node_ratio": 0.5,
+      "success": true,
+      "log_file": "scenario_a3_results.log",
+      "execution_time": "2025-10-09T15:54:28.188938"
+    },
+    "scenario_a4": {
+      "forerunner_ratio": 0.7,
+      "slow_node_ratio": 0.5,
+      "success": true,
+      "log_file": "scenario_a4_results.log",
+      "execution_time": "2025-10-09T15:54:35.788824"
+    },
+    "scenario_a5": {
+      "forerunner_ratio": 0.9,
+      "slow_node_ratio": 0.5,
+      "success": true,
+      "log_file": "scenario_a5_results.log",
+      "execution_time": "2025-10-09T15:54:43.670181"
+    },
+    "scenario_b1": {
+      "forerunner_ratio": 0.7,
+      "slow_node_ratio": 0.1,
+      "success": true,
+      "log_file": "scenario_b1_results.log",
+      "execution_time": "2025-10-09T15:54:51.286140"
+    },
+    "scenario_b2": {
+      "forerunner_ratio": 0.7,
+      "slow_node_ratio": 0.5,
+      "success": true,
+      "log_file": "scenario_b2_results.log",
+      "execution_time": "2025-10-09T15:54:59.000808"
+    },
+    "scenario_b3": {
+      "forerunner_ratio": 0.7,
+      "slow_node_ratio": 0.9,
+      "success": true,
+      "log_file": "scenario_b3_results.log",
+      "execution_time": "2025-10-09T15:55:06.550916"
+    },
+    "scenario_c1": {
+      "forerunner_ratio": 0.9,
+      "slow_node_ratio": 0.1,
+      "success": true,
+      "log_file": "scenario_c1_results.log",
+      "execution_time": "2025-10-09T15:55:14.567623"
+    },
+    "scenario_c2": {
+      "forerunner_ratio": 0.9,
+      "slow_node_ratio": 0.3,
+      "success": true,
+      "log_file": "scenario_c2_results.log",
+      "execution_time": "2025-10-09T15:55:22.316157"
+    },
+    "scenario_c3": {
+      "forerunner_ratio": 0.9,
+      "slow_node_ratio": 0.5,
+      "success": true,
+      "log_file": "scenario_c3_results.log",
+      "execution_time": "2025-10-09T15:55:30.178702"
+    },
+    "scenario_c4": {
+      "forerunner_ratio": 0.9,
+      "slow_node_ratio": 0.7,
+      "success": true,
+      "log_file": "scenario_c4_results.log",
+      "execution_time": "2025-10-09T15:55:38.194598"
+    },
+    "scenario_c5": {
+      "forerunner_ratio": 0.7,
+      "slow_node_ratio": 0.1,
+      "success": true,
+      "log_file": "scenario_c5_results.log",
+      "execution_time": "2025-10-09T15:55:45.775715"
+    },
+    "scenario_c6": {
+      "forerunner_ratio": 0.7,
+      "slow_node_ratio": 0.3,
+      "success": true,
+      "log_file": "scenario_c6_results.log",
+      "execution_time": "2025-10-09T15:55:53.441430"
+    },
+    "scenario_c7": {
+      "forerunner_ratio": 0.7,
+      "slow_node_ratio": 0.5,
+      "success": true,
+      "log_file": "scenario_c7_results.log",
+      "execution_time": "2025-10-09T15:56:01.391050"
+    },
+    "scenario_c8": {
+      "forerunner_ratio": 0.7,
+      "slow_node_ratio": 0.7,
+      "success": true,
+      "log_file": "scenario_c8_results.log",
+      "execution_time": "2025-10-09T15:56:09.029999"
+    },
+    "scenario_c9": {
+      "forerunner_ratio": 0.5,
+      "slow_node_ratio": 0.1,
+      "success": true,
+      "log_file": "scenario_c9_results.log",
+      "execution_time": "2025-10-09T15:56:16.445798"
+    },
+    "scenario_c10": {
+      "forerunner_ratio": 0.5,
+      "slow_node_ratio": 0.3,
+      "success": true,
+      "log_file": "scenario_c10_results.log",
+      "execution_time": "2025-10-09T15:56:23.975855"
+    },
+    "scenario_c11": {
+      "forerunner_ratio": 0.5,
+      "slow_node_ratio": 0.5,
+      "success": true,
+      "log_file": "scenario_c11_results.log",
+      "execution_time": "2025-10-09T15:56:31.609216"
+    },
+    "scenario_c12": {
+      "forerunner_ratio": 0.5,
+      "slow_node_ratio": 0.7,
+      "success": true,
+      "log_file": "scenario_c12_results.log",
+      "execution_time": "2025-10-09T15:56:39.051399"
+    },
+    "scenario_c13": {
+      "forerunner_ratio": 0.3,
+      "slow_node_ratio": 0.1,
+      "success": true,
+      "log_file": "scenario_c13_results.log",
+      "execution_time": "2025-10-09T15:56:46.359783"
+    },
+    "scenario_c14": {
+      "forerunner_ratio": 0.3,
+      "slow_node_ratio": 0.3,
+      "success": true,
+      "log_file": "scenario_c14_results.log",
+      "execution_time": "2025-10-09T15:56:53.770217"
+    },
+    "scenario_c15": {
+      "forerunner_ratio": 0.3,
+      "slow_node_ratio": 0.5,
+      "success": true,
+      "log_file": "scenario_c15_results.log",
+      "execution_time": "2025-10-09T15:57:00.988288"
+    },
+    "scenario_c16": {
+      "forerunner_ratio": 0.3,
+      "slow_node_ratio": 0.7,
+      "success": true,
+      "log_file": "scenario_c16_results.log",
+      "execution_time": "2025-10-09T15:57:08.372506"
+    }
+  }
+}
