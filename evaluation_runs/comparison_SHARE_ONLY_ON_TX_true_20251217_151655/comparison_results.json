@@ -1,0 +1,542 @@
+{
+  "P10_10_ON": {
+    "scenario": "P10_10_ON",
+    "neighbors_only": {
+      "scenario": "P10_10_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5464.674901960784,
+        "median": 5523.0,
+        "stdev": 949.7860491861361,
+        "min": 0,
+        "max": 8612
+      },
+      "network_efficiency": {
+        "mean": 5.48800303746491,
+        "median": 5.5353028379080484,
+        "stdev": 0.9737100009640376,
+        "min": 0,
+        "max": 14.036101083032491
+      }
+    },
+    "request_based": {
+      "scenario": "P10_10_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5464.674901960784,
+        "median": 5523.0,
+        "stdev": 949.7860491861361,
+        "min": 0,
+        "max": 8612
+      },
+      "network_efficiency": {
+        "mean": 5.48800303746491,
+        "median": 5.5353028379080484,
+        "stdev": 0.9737100009640376,
+        "min": 0,
+        "max": 14.036101083032491
+      }
+    },
+    "improvement": {
+      "propagation_time": 0.0,
+      "network_efficiency": 0.0
+    }
+  },
+  "P10_50_ON": {
+    "scenario": "P10_50_ON",
+    "neighbors_only": {
+      "scenario": "P10_50_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5460.954901960784,
+        "median": 5508.0,
+        "stdev": 958.2404206316578,
+        "min": 0,
+        "max": 8612
+      },
+      "network_efficiency": {
+        "mean": 5.500789640059552,
+        "median": 5.52052052052052,
+        "stdev": 1.1166179760070996,
+        "min": 0,
+        "max": 26.974683544303797
+      }
+    },
+    "request_based": {
+      "scenario": "P10_50_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5460.954901960784,
+        "median": 5508.0,
+        "stdev": 958.2404206316578,
+        "min": 0,
+        "max": 8612
+      },
+      "network_efficiency": {
+        "mean": 5.500789640059552,
+        "median": 5.52052052052052,
+        "stdev": 1.1166179760070996,
+        "min": 0,
+        "max": 26.974683544303797
+      }
+    },
+    "improvement": {
+      "propagation_time": 0.0,
+      "network_efficiency": 0.0
+    }
+  },
+  "P10_90_ON": {
+    "scenario": "P10_90_ON",
+    "neighbors_only": {
+      "scenario": "P10_90_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5465.610196078432,
+        "median": 5509.0,
+        "stdev": 961.0120916533789,
+        "min": 0,
+        "max": 7806
+      },
+      "network_efficiency": {
+        "mean": 5.504380301089238,
+        "median": 5.520040080160321,
+        "stdev": 1.1235366503977888,
+        "min": 0,
+        "max": 26.974683544303797
+      }
+    },
+    "request_based": {
+      "scenario": "P10_90_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5465.610196078432,
+        "median": 5509.0,
+        "stdev": 961.0120916533789,
+        "min": 0,
+        "max": 7806
+      },
+      "network_efficiency": {
+        "mean": 5.504380301089238,
+        "median": 5.520040080160321,
+        "stdev": 1.1235366503977888,
+        "min": 0,
+        "max": 26.974683544303797
+      }
+    },
+    "improvement": {
+      "propagation_time": 0.0,
+      "network_efficiency": 0.0
+    }
+  },
+  "P40_10_ON": {
+    "scenario": "P40_10_ON",
+    "neighbors_only": {
+      "scenario": "P40_10_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5477.669411764706,
+        "median": 5522.5,
+        "stdev": 975.4142277906494,
+        "min": 0,
+        "max": 9365
+      },
+      "network_efficiency": {
+        "mean": 5.503526578423393,
+        "median": 5.534802337407548,
+        "stdev": 1.0070190871694171,
+        "min": 0,
+        "max": 14.24860853432282
+      }
+    },
+    "request_based": {
+      "scenario": "P40_10_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5477.669411764706,
+        "median": 5522.5,
+        "stdev": 975.4142277906494,
+        "min": 0,
+        "max": 9365
+      },
+      "network_efficiency": {
+        "mean": 5.503526578423393,
+        "median": 5.534802337407548,
+        "stdev": 1.0070190871694171,
+        "min": 0,
+        "max": 14.24860853432282
+      }
+    },
+    "improvement": {
+      "propagation_time": 0.0,
+      "network_efficiency": 0.0
+    }
+  },
+  "P40_50_ON": {
+    "scenario": "P40_50_ON",
+    "neighbors_only": {
+      "scenario": "P40_50_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5472.714117647059,
+        "median": 5519.5,
+        "stdev": 969.8395807118441,
+        "min": 0,
+        "max": 9365
+      },
+      "network_efficiency": {
+        "mean": 5.502687360849265,
+        "median": 5.534034034034034,
+        "stdev": 1.0445597045154456,
+        "min": 0,
+        "max": 21.793313069908816
+      }
+    },
+    "request_based": {
+      "scenario": "P40_50_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5472.714117647059,
+        "median": 5519.5,
+        "stdev": 969.8395807118441,
+        "min": 0,
+        "max": 9365
+      },
+      "network_efficiency": {
+        "mean": 5.502687360849265,
+        "median": 5.534034034034034,
+        "stdev": 1.0445597045154456,
+        "min": 0,
+        "max": 21.793313069908816
+      }
+    },
+    "improvement": {
+      "propagation_time": 0.0,
+      "network_efficiency": 0.0
+    }
+  },
+  "P40_90_ON": {
+    "scenario": "P40_90_ON",
+    "neighbors_only": {
+      "scenario": "P40_90_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5467.263921568628,
+        "median": 5515.5,
+        "stdev": 970.467168259084,
+        "min": 0,
+        "max": 10774
+      },
+      "network_efficiency": {
+        "mean": 5.495210781422739,
+        "median": 5.5275275275275275,
+        "stdev": 1.0372018524059474,
+        "min": 0,
+        "max": 21.793313069908816
+      }
+    },
+    "request_based": {
+      "scenario": "P40_90_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5467.263921568628,
+        "median": 5515.5,
+        "stdev": 970.467168259084,
+        "min": 0,
+        "max": 10774
+      },
+      "network_efficiency": {
+        "mean": 5.495210781422739,
+        "median": 5.5275275275275275,
+        "stdev": 1.0372018524059474,
+        "min": 0,
+        "max": 21.793313069908816
+      }
+    },
+    "improvement": {
+      "propagation_time": 0.0,
+      "network_efficiency": 0.0
+    }
+  },
+  "P70_10_ON": {
+    "scenario": "P70_10_ON",
+    "neighbors_only": {
+      "scenario": "P70_10_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5481.365098039216,
+        "median": 5513.0,
+        "stdev": 973.0602144225232,
+        "min": 0,
+        "max": 9756
+      },
+      "network_efficiency": {
+        "mean": 5.508505586640374,
+        "median": 5.523284807853946,
+        "stdev": 1.0094795227443063,
+        "min": 0,
+        "max": 14.24860853432282
+      }
+    },
+    "request_based": {
+      "scenario": "P70_10_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5481.365098039216,
+        "median": 5513.0,
+        "stdev": 973.0602144225232,
+        "min": 0,
+        "max": 9756
+      },
+      "network_efficiency": {
+        "mean": 5.508505586640374,
+        "median": 5.523284807853946,
+        "stdev": 1.0094795227443063,
+        "min": 0,
+        "max": 14.24860853432282
+      }
+    },
+    "improvement": {
+      "propagation_time": 0.0,
+      "network_efficiency": 0.0
+    }
+  },
+  "P70_50_ON": {
+    "scenario": "P70_50_ON",
+    "neighbors_only": {
+      "scenario": "P70_50_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5462.0152941176475,
+        "median": 5506.5,
+        "stdev": 960.1871455163729,
+        "min": 0,
+        "max": 9756
+      },
+      "network_efficiency": {
+        "mean": 5.4851789115310385,
+        "median": 5.518036072144288,
+        "stdev": 0.9890064404039796,
+        "min": 0,
+        "max": 14.24860853432282
+      }
+    },
+    "request_based": {
+      "scenario": "P70_50_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5462.0152941176475,
+        "median": 5506.5,
+        "stdev": 960.1871455163729,
+        "min": 0,
+        "max": 9756
+      },
+      "network_efficiency": {
+        "mean": 5.4851789115310385,
+        "median": 5.518036072144288,
+        "stdev": 0.9890064404039796,
+        "min": 0,
+        "max": 14.24860853432282
+      }
+    },
+    "improvement": {
+      "propagation_time": 0.0,
+      "network_efficiency": 0.0
+    }
+  },
+  "P70_90_ON": {
+    "scenario": "P70_90_ON",
+    "neighbors_only": {
+      "scenario": "P70_90_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5468.403529411765,
+        "median": 5504.5,
+        "stdev": 966.8480889245101,
+        "min": 0,
+        "max": 9756
+      },
+      "network_efficiency": {
+        "mean": 5.489769143697876,
+        "median": 5.518036072144288,
+        "stdev": 0.9867742811351464,
+        "min": 0,
+        "max": 13.073500967117988
+      }
+    },
+    "request_based": {
+      "scenario": "P70_90_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5468.403529411765,
+        "median": 5504.5,
+        "stdev": 966.8480889245101,
+        "min": 0,
+        "max": 9756
+      },
+      "network_efficiency": {
+        "mean": 5.489769143697876,
+        "median": 5.518036072144288,
+        "stdev": 0.9867742811351464,
+        "min": 0,
+        "max": 13.073500967117988
+      }
+    },
+    "improvement": {
+      "propagation_time": 0.0,
+      "network_efficiency": 0.0
+    }
+  },
+  "P100_10_ON": {
+    "scenario": "P100_10_ON",
+    "neighbors_only": {
+      "scenario": "P100_10_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5474.021176470588,
+        "median": 5505.0,
+        "stdev": 965.1030701417576,
+        "min": 0,
+        "max": 8427
+      },
+      "network_efficiency": {
+        "mean": 5.500016934030074,
+        "median": 5.5212823043484365,
+        "stdev": 0.9938752470986763,
+        "min": 0,
+        "max": 12.627450980392156
+      }
+    },
+    "request_based": {
+      "scenario": "P100_10_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5474.021176470588,
+        "median": 5505.0,
+        "stdev": 965.1030701417576,
+        "min": 0,
+        "max": 8427
+      },
+      "network_efficiency": {
+        "mean": 5.500016934030074,
+        "median": 5.5212823043484365,
+        "stdev": 0.9938752470986763,
+        "min": 0,
+        "max": 12.627450980392156
+      }
+    },
+    "improvement": {
+      "propagation_time": 0.0,
+      "network_efficiency": 0.0
+    }
+  },
+  "P100_50_ON": {
+    "scenario": "P100_50_ON",
+    "neighbors_only": {
+      "scenario": "P100_50_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5485.3501960784315,
+        "median": 5520.5,
+        "stdev": 975.2092375448973,
+        "min": 0,
+        "max": 8427
+      },
+      "network_efficiency": {
+        "mean": 5.508751199657229,
+        "median": 5.535803839912056,
+        "stdev": 0.992124773742524,
+        "min": 0,
+        "max": 12.627450980392156
+      }
+    },
+    "request_based": {
+      "scenario": "P100_50_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5485.3501960784315,
+        "median": 5520.5,
+        "stdev": 975.2092375448973,
+        "min": 0,
+        "max": 8427
+      },
+      "network_efficiency": {
+        "mean": 5.508751199657229,
+        "median": 5.535803839912056,
+        "stdev": 0.992124773742524,
+        "min": 0,
+        "max": 12.627450980392156
+      }
+    },
+    "improvement": {
+      "propagation_time": 0.0,
+      "network_efficiency": 0.0
+    }
+  },
+  "P100_90_ON": {
+    "scenario": "P100_90_ON",
+    "neighbors_only": {
+      "scenario": "P100_90_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5489.640392156863,
+        "median": 5531.0,
+        "stdev": 970.9972522534357,
+        "min": 0,
+        "max": 9246
+      },
+      "network_efficiency": {
+        "mean": 5.511286206950821,
+        "median": 5.54054054054054,
+        "stdev": 0.9885895413576389,
+        "min": 0,
+        "max": 14.13103448275862
+      }
+    },
+    "request_based": {
+      "scenario": "P100_90_ON",
+      "run_count": 50,
+      "block_count": 2550,
+      "propagation_time": {
+        "mean": 5489.640392156863,
+        "median": 5531.0,
+        "stdev": 970.9972522534357,
+        "min": 0,
+        "max": 9246
+      },
+      "network_efficiency": {
+        "mean": 5.511286206950821,
+        "median": 5.54054054054054,
+        "stdev": 0.9885895413576389,
+        "min": 0,
+        "max": 14.13103448275862
+      }
+    },
+    "improvement": {
+      "propagation_time": 0.0,
+      "network_efficiency": 0.0
+    }
+  }
+}

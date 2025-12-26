@@ -1,0 +1,1442 @@
+[
+  {
+    "scenario": "P10_10_OFF",
+    "broadcast_scope": null,
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5488.900784313725,
+      "median": 5514.5,
+      "stdev": 980.4028162895486,
+      "min": 0,
+      "max": 9741
+    },
+    "network_efficiency": {
+      "mean": 0.17662091421597087,
+      "median": 0.18007386317677293,
+      "stdev": 0.031100259015935564,
+      "min": 0,
+      "max": 0.24555694618272841
+    }
+  },
+  {
+    "scenario": "P10_50_OFF",
+    "broadcast_scope": null,
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5488.900784313725,
+      "median": 5514.5,
+      "stdev": 980.4028162895486,
+      "min": 0,
+      "max": 9741
+    },
+    "network_efficiency": {
+      "mean": 0.17662091421597087,
+      "median": 0.18007386317677293,
+      "stdev": 0.031100259015935564,
+      "min": 0,
+      "max": 0.24555694618272841
+    }
+  },
+  {
+    "scenario": "P10_90_OFF",
+    "broadcast_scope": null,
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5488.900784313725,
+      "median": 5514.5,
+      "stdev": 980.4028162895486,
+      "min": 0,
+      "max": 9741
+    },
+    "network_efficiency": {
+      "mean": 0.17662091421597087,
+      "median": 0.18007386317677293,
+      "stdev": 0.031100259015935564,
+      "min": 0,
+      "max": 0.24555694618272841
+    }
+  },
+  {
+    "scenario": "P40_10_OFF",
+    "broadcast_scope": null,
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5457.6482352941175,
+      "median": 5503.5,
+      "stdev": 966.0987694196946,
+      "min": 0,
+      "max": 8876
+    },
+    "network_efficiency": {
+      "mean": 0.1774995848486198,
+      "median": 0.1802613804639101,
+      "stdev": 0.03122328732853648,
+      "min": 0,
+      "max": 0.265329189036451
+    }
+  },
+  {
+    "scenario": "P40_50_OFF",
+    "broadcast_scope": null,
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5457.6482352941175,
+      "median": 5503.5,
+      "stdev": 966.0987694196946,
+      "min": 0,
+      "max": 8876
+    },
+    "network_efficiency": {
+      "mean": 0.1774995848486198,
+      "median": 0.1802613804639101,
+      "stdev": 0.03122328732853648,
+      "min": 0,
+      "max": 0.265329189036451
+    }
+  },
+  {
+    "scenario": "P40_90_OFF",
+    "broadcast_scope": null,
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5457.6482352941175,
+      "median": 5503.5,
+      "stdev": 966.0987694196946,
+      "min": 0,
+      "max": 8876
+    },
+    "network_efficiency": {
+      "mean": 0.1774995848486198,
+      "median": 0.1802613804639101,
+      "stdev": 0.03122328732853648,
+      "min": 0,
+      "max": 0.265329189036451
+    }
+  },
+  {
+    "scenario": "P70_10_OFF",
+    "broadcast_scope": null,
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5475.780392156863,
+      "median": 5512.0,
+      "stdev": 967.3560065442592,
+      "min": 0,
+      "max": 9473
+    },
+    "network_efficiency": {
+      "mean": 0.17687322481232437,
+      "median": 0.18021265092809516,
+      "stdev": 0.031108471220337712,
+      "min": 0,
+      "max": 0.26356359324043876
+    }
+  },
+  {
+    "scenario": "P70_50_OFF",
+    "broadcast_scope": null,
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5475.780392156863,
+      "median": 5512.0,
+      "stdev": 967.3560065442592,
+      "min": 0,
+      "max": 9473
+    },
+    "network_efficiency": {
+      "mean": 0.17687322481232437,
+      "median": 0.18021265092809516,
+      "stdev": 0.031108471220337712,
+      "min": 0,
+      "max": 0.26356359324043876
+    }
+  },
+  {
+    "scenario": "P70_90_OFF",
+    "broadcast_scope": null,
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5475.780392156863,
+      "median": 5512.0,
+      "stdev": 967.3560065442592,
+      "min": 0,
+      "max": 9473
+    },
+    "network_efficiency": {
+      "mean": 0.17687322481232437,
+      "median": 0.18021265092809516,
+      "stdev": 0.031108471220337712,
+      "min": 0,
+      "max": 0.26356359324043876
+    }
+  },
+  {
+    "scenario": "P100_10_OFF",
+    "broadcast_scope": null,
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5481.565490196079,
+      "median": 5514.0,
+      "stdev": 976.6585873772972,
+      "min": 0,
+      "max": 10489
+    },
+    "network_efficiency": {
+      "mean": 0.1767471807936631,
+      "median": 0.18014772113132768,
+      "stdev": 0.031301657048241074,
+      "min": 0,
+      "max": 0.2673017652003362
+    }
+  },
+  {
+    "scenario": "P100_50_OFF",
+    "broadcast_scope": null,
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5481.565490196079,
+      "median": 5514.0,
+      "stdev": 976.6585873772972,
+      "min": 0,
+      "max": 10489
+    },
+    "network_efficiency": {
+      "mean": 0.1767471807936631,
+      "median": 0.18014772113132768,
+      "stdev": 0.031301657048241074,
+      "min": 0,
+      "max": 0.2673017652003362
+    }
+  },
+  {
+    "scenario": "P100_90_OFF",
+    "broadcast_scope": null,
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5481.565490196079,
+      "median": 5514.0,
+      "stdev": 976.6585873772972,
+      "min": 0,
+      "max": 10489
+    },
+    "network_efficiency": {
+      "mean": 0.1767471807936631,
+      "median": 0.18014772113132768,
+      "stdev": 0.031301657048241074,
+      "min": 0,
+      "max": 0.2673017652003362
+    }
+  },
+  {
+    "scenario": "P10_10_ON",
+    "broadcast_scope": "NEIGHBORS_ONLY",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5477.979215686274,
+      "median": 5516.0,
+      "stdev": 974.2517515718072,
+      "min": 0,
+      "max": 11033
+    },
+    "network_efficiency": {
+      "mean": 0.1767842591196925,
+      "median": 0.18019416166211857,
+      "stdev": 0.030968967647310153,
+      "min": 0,
+      "max": 0.2639608520437536
+    },
+    "traffic": {
+      "valid_count": 50,
+      "send": {
+        "avg": {
+          "mean": 110431956.44,
+          "median": 113181450.0,
+          "stdev": 18853895.46092419,
+          "min": 12174572,
+          "max": 130041492
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 6736001.5,
+          "median": 6911855.0,
+          "stdev": 948970.99118099,
+          "min": 2662400,
+          "max": 7814050
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 115640188.38,
+          "median": 118880668.0,
+          "stdev": 19312049.33765324,
+          "min": 14532608,
+          "max": 136403958
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P10_10_ON",
+    "broadcast_scope": "REQUEST_BASED",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5471.056470588235,
+      "median": 5507.0,
+      "stdev": 978.0112525673647,
+      "min": 0,
+      "max": 9858
+    },
+    "network_efficiency": {
+      "mean": 0.17697115235509694,
+      "median": 0.18047283883775492,
+      "stdev": 0.031168767734140478,
+      "min": 0,
+      "max": 0.25463336019339244
+    },
+    "traffic": {
+      "valid_count": 10,
+      "send": {
+        "avg": {
+          "mean": 4349818.7,
+          "median": 3697799.0,
+          "stdev": 1970487.4097885895,
+          "min": 983040,
+          "max": 7339134
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 3983324.4,
+          "median": 3637226.5,
+          "stdev": 1515632.5743696883,
+          "min": 983040,
+          "max": 5872025
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 8273229.9,
+          "median": 7228242.0,
+          "stdev": 3462350.125598522,
+          "min": 1926758,
+          "max": 12678522
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P10_50_ON",
+    "broadcast_scope": "NEIGHBORS_ONLY",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5477.471764705882,
+      "median": 5504.5,
+      "stdev": 972.2672248306117,
+      "min": 0,
+      "max": 8400
+    },
+    "network_efficiency": {
+      "mean": 0.17687673584589925,
+      "median": 0.18033674998676363,
+      "stdev": 0.03112581453040598,
+      "min": 0,
+      "max": 0.24295432458697766
+    },
+    "traffic": {
+      "valid_count": 37,
+      "send": {
+        "avg": {
+          "mean": 84875092.7027027,
+          "median": 104625374,
+          "stdev": 36136480.749440655,
+          "min": 12214272,
+          "max": 126245580
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 5667356.72972973,
+          "median": 6196953,
+          "stdev": 1607924.4514736251,
+          "min": 2476360,
+          "max": 7989930
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 89351454.32432432,
+          "median": 110596274,
+          "stdev": 37145249.452993825,
+          "min": 14794345,
+          "max": 132022756
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P10_50_ON",
+    "broadcast_scope": "REQUEST_BASED",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5473.49725490196,
+      "median": 5520.0,
+      "stdev": 964.0054743224491,
+      "min": 0,
+      "max": 8436
+    },
+    "network_efficiency": {
+      "mean": 0.17694927770657357,
+      "median": 0.1800956402773566,
+      "stdev": 0.030906460230651963,
+      "min": 0,
+      "max": 0.2658410138248848
+    },
+    "traffic": {
+      "valid_count": 20,
+      "send": {
+        "avg": {
+          "mean": 5864219.15,
+          "median": 5902401.5,
+          "stdev": 2850846.6669816617,
+          "min": 983040,
+          "max": 13064918
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 5042113.85,
+          "median": 4741737.5,
+          "stdev": 1952407.0445680574,
+          "min": 983040,
+          "max": 8302618
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 10822886.8,
+          "median": 10498054.0,
+          "stdev": 4718574.850551656,
+          "min": 1926758,
+          "max": 21201104
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P10_90_ON",
+    "broadcast_scope": "NEIGHBORS_ONLY",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5481.903137254902,
+      "median": 5518.0,
+      "stdev": 972.3315568082745,
+      "min": 0,
+      "max": 8400
+    },
+    "network_efficiency": {
+      "mean": 0.17676821421922437,
+      "median": 0.18001800180018002,
+      "stdev": 0.03113793517236263,
+      "min": 0,
+      "max": 0.2641033722029625
+    },
+    "traffic": {
+      "valid_count": 12,
+      "send": {
+        "avg": {
+          "mean": 49516643.916666664,
+          "median": 43968223.0,
+          "stdev": 35286265.41738928,
+          "min": 9830400,
+          "max": 119064765
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 4027195.9166666665,
+          "median": 3324706.0,
+          "stdev": 2052974.8332626733,
+          "min": 1123474,
+          "max": 7228235
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 52620878.5,
+          "median": 46501380.0,
+          "stdev": 36743973.275080346,
+          "min": 11115913,
+          "max": 123984296
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P10_90_ON",
+    "broadcast_scope": "REQUEST_BASED",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5473.873725490196,
+      "median": 5514.0,
+      "stdev": 960.8540318455105,
+      "min": 0,
+      "max": 8436
+    },
+    "network_efficiency": {
+      "mean": 0.17709380083885953,
+      "median": 0.1801639506557539,
+      "stdev": 0.03088203471737286,
+      "min": 0,
+      "max": 0.2658410138248848
+    },
+    "traffic": {
+      "valid_count": 12,
+      "send": {
+        "avg": {
+          "mean": 5746297.666666667,
+          "median": 5425762.0,
+          "stdev": 2802260.3017266854,
+          "min": 1003102,
+          "max": 11350682
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 4743457.666666667,
+          "median": 4654357.5,
+          "stdev": 2070171.6090824378,
+          "min": 1003102,
+          "max": 8841611
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 10433685.833333334,
+          "median": 10100101.5,
+          "stdev": 4840734.208171972,
+          "min": 1966080,
+          "max": 20140889
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P40_10_ON",
+    "broadcast_scope": "NEIGHBORS_ONLY",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5502.255294117647,
+      "median": 5544.0,
+      "stdev": 989.2422509142696,
+      "min": 0,
+      "max": 9849
+    },
+    "network_efficiency": {
+      "mean": 0.1760526573931116,
+      "median": 0.17933075748128954,
+      "stdev": 0.031218620813947034,
+      "min": 0,
+      "max": 0.2640326121041079
+    },
+    "traffic": {
+      "valid_count": 50,
+      "send": {
+        "avg": {
+          "mean": 250932718.54,
+          "median": 260384146.5,
+          "stdev": 38304289.508513235,
+          "min": 35001841,
+          "max": 287594284
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 46830382.48,
+          "median": 47640567.0,
+          "stdev": 5141034.308061973,
+          "min": 13851422,
+          "max": 51467501
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 293873592.76,
+          "median": 303792097.0,
+          "stdev": 42430726.22933173,
+          "min": 48185528,
+          "max": 334421659
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P40_10_ON",
+    "broadcast_scope": "REQUEST_BASED",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5457.952941176471,
+      "median": 5484.5,
+      "stdev": 963.1603487152927,
+      "min": 0,
+      "max": 8215
+    },
+    "network_efficiency": {
+      "mean": 0.17752513371687043,
+      "median": 0.18109380659181457,
+      "stdev": 0.03088819976761118,
+      "min": 0,
+      "max": 0.2307283359914939
+    },
+    "traffic": {
+      "valid_count": 11,
+      "send": {
+        "avg": {
+          "mean": 41824140.36363637,
+          "median": 18074219,
+          "stdev": 66148062.64149353,
+          "min": 1646802,
+          "max": 232804937
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 25477303,
+          "median": 17850177,
+          "stdev": 23142259.668537732,
+          "min": 1675442,
+          "max": 81535012
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 67090763.36363637,
+          "median": 35924396,
+          "stdev": 88120006.72234674,
+          "min": 3238249,
+          "max": 313975954
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P40_50_ON",
+    "broadcast_scope": "NEIGHBORS_ONLY",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5455.256078431373,
+      "median": 5500.5,
+      "stdev": 960.1178555265474,
+      "min": 0,
+      "max": 9951
+    },
+    "network_efficiency": {
+      "mean": 0.17762109174104063,
+      "median": 0.1807250661273773,
+      "stdev": 0.030849720138567866,
+      "min": 0,
+      "max": 0.2464923469387755
+    },
+    "traffic": {
+      "valid_count": 37,
+      "send": {
+        "avg": {
+          "mean": 205760772.54054055,
+          "median": 240993183,
+          "stdev": 71621906.00707145,
+          "min": 35880960,
+          "max": 276710031
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 42724053.64864865,
+          "median": 46472899,
+          "stdev": 8432651.757650102,
+          "min": 14417920,
+          "max": 51017591
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 245451230.35135135,
+          "median": 284810800,
+          "stdev": 78240108.70050222,
+          "min": 49354225,
+          "max": 320809205
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P40_50_ON",
+    "broadcast_scope": "REQUEST_BASED",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5449.597647058824,
+      "median": 5494.0,
+      "stdev": 970.3764318310048,
+      "min": 0,
+      "max": 8215
+    },
+    "network_efficiency": {
+      "mean": 0.17745646643589796,
+      "median": 0.18078279095554628,
+      "stdev": 0.03153691580062161,
+      "min": 0,
+      "max": 0.2631138392857143
+    },
+    "traffic": {
+      "valid_count": 22,
+      "send": {
+        "avg": {
+          "mean": 70368802.86363636,
+          "median": 56900372.5,
+          "stdev": 58581710.53114383,
+          "min": 1646802,
+          "max": 220698701
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 40899132.27272727,
+          "median": 43460038.0,
+          "stdev": 23269898.362584636,
+          "min": 1675442,
+          "max": 77488650
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 110972416.9090909,
+          "median": 100164177.0,
+          "stdev": 80500610.59338965,
+          "min": 3238249,
+          "max": 297533440
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P40_90_ON",
+    "broadcast_scope": "NEIGHBORS_ONLY",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5468.243137254902,
+      "median": 5503.0,
+      "stdev": 967.1038298318958,
+      "min": 0,
+      "max": 9939
+    },
+    "network_efficiency": {
+      "mean": 0.1771523652965509,
+      "median": 0.18049661002025183,
+      "stdev": 0.030967690395240357,
+      "min": 0,
+      "max": 0.26672613737734163
+    },
+    "traffic": {
+      "valid_count": 12,
+      "send": {
+        "avg": {
+          "mean": 128697850.5,
+          "median": 132488549.5,
+          "stdev": 80694808.759024,
+          "min": 19561836,
+          "max": 269130983
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 31669396.916666668,
+          "median": 35599153.0,
+          "stdev": 14571672.351672808,
+          "min": 6780969,
+          "max": 49484049
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 158351323.83333334,
+          "median": 164809594.5,
+          "stdev": 93478701.52952875,
+          "min": 25904080,
+          "max": 314025785
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P40_90_ON",
+    "broadcast_scope": "REQUEST_BASED",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5461.465882352941,
+      "median": 5500.5,
+      "stdev": 976.493325127189,
+      "min": 0,
+      "max": 9056
+    },
+    "network_efficiency": {
+      "mean": 0.17727529267261025,
+      "median": 0.18066847335140018,
+      "stdev": 0.0312852911212176,
+      "min": 0,
+      "max": 0.26289566236811257
+    },
+    "traffic": {
+      "valid_count": 12,
+      "send": {
+        "avg": {
+          "mean": 114892309.75,
+          "median": 87866308.5,
+          "stdev": 87832318.40140183,
+          "min": 1646802,
+          "max": 266426181
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 52959946.583333336,
+          "median": 55660256.0,
+          "stdev": 25877595.326929964,
+          "min": 1675442,
+          "max": 85632210
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 167527269.25,
+          "median": 143298390.0,
+          "stdev": 112174821.32329063,
+          "min": 3238249,
+          "max": 351669154
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P70_10_ON",
+    "broadcast_scope": "NEIGHBORS_ONLY",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5483.460392156862,
+      "median": 5539.0,
+      "stdev": 963.1049283340874,
+      "min": 0,
+      "max": 8290
+    },
+    "network_efficiency": {
+      "mean": 0.17656948787150312,
+      "median": 0.17937219730941703,
+      "stdev": 0.030849843219895187,
+      "min": 0,
+      "max": 0.24323659616330545
+    },
+    "traffic": {
+      "valid_count": 50,
+      "send": {
+        "avg": {
+          "mean": 312667553.38,
+          "median": 322087394.0,
+          "stdev": 43797343.19335675,
+          "min": 68010318,
+          "max": 348187972
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 92278857.7,
+          "median": 93133639.5,
+          "stdev": 8261957.533472122,
+          "min": 41353216,
+          "max": 100317507
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 398568394.34,
+          "median": 407585885.5,
+          "stdev": 50379112.66907025,
+          "min": 108598474,
+          "max": 439379080
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P70_10_ON",
+    "broadcast_scope": "REQUEST_BASED",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5467.870196078431,
+      "median": 5521.0,
+      "stdev": 963.6868986434682,
+      "min": 0,
+      "max": 10883
+    },
+    "network_efficiency": {
+      "mean": 0.1771261336106603,
+      "median": 0.18005765118198488,
+      "stdev": 0.030851353769819248,
+      "min": 0,
+      "max": 0.23360266159695817
+    },
+    "traffic": {
+      "valid_count": 11,
+      "send": {
+        "avg": {
+          "mean": 80785175,
+          "median": 27285354,
+          "stdev": 151727099.96686402,
+          "min": 2146785,
+          "max": 528879499
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 41503360.90909091,
+          "median": 27174887,
+          "stdev": 37890487.56737591,
+          "min": 2162688,
+          "max": 130355116
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 121956919.81818181,
+          "median": 54349774,
+          "stdev": 185883861.59111127,
+          "min": 4231346,
+          "max": 658179109
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P70_50_ON",
+    "broadcast_scope": "NEIGHBORS_ONLY",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5481.526666666667,
+      "median": 5537.0,
+      "stdev": 967.9574199137336,
+      "min": 0,
+      "max": 8960
+    },
+    "network_efficiency": {
+      "mean": 0.17655675905683607,
+      "median": 0.1797177166575009,
+      "stdev": 0.030668952094182217,
+      "min": 0,
+      "max": 0.2665429808286951
+    },
+    "traffic": {
+      "valid_count": 37,
+      "send": {
+        "avg": {
+          "mean": 262502589.3783784,
+          "median": 302713257,
+          "stdev": 83000478.45182127,
+          "min": 67918233,
+          "max": 345315871
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 86665756.16216215,
+          "median": 92322518,
+          "stdev": 14187585.282070128,
+          "min": 40835481,
+          "max": 101759664
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 344325739.6216216,
+          "median": 389751247,
+          "stdev": 94466245.87062219,
+          "min": 107676945,
+          "max": 439362706
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P70_50_ON",
+    "broadcast_scope": "REQUEST_BASED",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5454.778823529412,
+      "median": 5494.5,
+      "stdev": 961.1604290865945,
+      "min": 0,
+      "max": 9187
+    },
+    "network_efficiency": {
+      "mean": 0.17758866247468647,
+      "median": 0.18068479684917316,
+      "stdev": 0.031071719744199273,
+      "min": 0,
+      "max": 0.2570817744521646
+    },
+    "traffic": {
+      "valid_count": 22,
+      "send": {
+        "avg": {
+          "mean": 137957332.6818182,
+          "median": 91665008.0,
+          "stdev": 135759296.8539167,
+          "min": 2146785,
+          "max": 527206730
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 68939296.86363636,
+          "median": 74372975.0,
+          "stdev": 39231730.57532556,
+          "min": 2162688,
+          "max": 128833734
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 206443678.9090909,
+          "median": 165884359.0,
+          "stdev": 170801451.4580847,
+          "min": 4231346,
+          "max": 656040464
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P70_90_ON",
+    "broadcast_scope": "NEIGHBORS_ONLY",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5466.23294117647,
+      "median": 5493.0,
+      "stdev": 966.2145050889216,
+      "min": 0,
+      "max": 9448
+    },
+    "network_efficiency": {
+      "mean": 0.17714707250505543,
+      "median": 0.18093771723227842,
+      "stdev": 0.030899679486345588,
+      "min": 0,
+      "max": 0.2589522546419098
+    },
+    "traffic": {
+      "valid_count": 12,
+      "send": {
+        "avg": {
+          "mean": 173026912.83333334,
+          "median": 174436176.0,
+          "stdev": 99072495.39523523,
+          "min": 30179954,
+          "max": 336432812
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 68524198.83333333,
+          "median": 77562746.0,
+          "stdev": 25702011.180656467,
+          "min": 20265747,
+          "max": 95379354
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 239180413.5,
+          "median": 250354289.5,
+          "stdev": 121918692.16006872,
+          "min": 50316620,
+          "max": 427288244
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P70_90_ON",
+    "broadcast_scope": "REQUEST_BASED",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5468.31294117647,
+      "median": 5505.5,
+      "stdev": 967.1517630987507,
+      "min": 0,
+      "max": 9422
+    },
+    "network_efficiency": {
+      "mean": 0.177074506373115,
+      "median": 0.18049661002025183,
+      "stdev": 0.031059715820255816,
+      "min": 0,
+      "max": 0.2646198830409357
+    },
+    "traffic": {
+      "valid_count": 12,
+      "send": {
+        "avg": {
+          "mean": 250569639.41666666,
+          "median": 164931632.0,
+          "stdev": 230734992.56403556,
+          "min": 3312546,
+          "max": 701137593
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 86624825.5,
+          "median": 94449519.5,
+          "stdev": 42532520.42068525,
+          "min": 3312546,
+          "max": 142578609
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 336818891.5,
+          "median": 258892602.5,
+          "stdev": 268522651.6436755,
+          "min": 6625093,
+          "max": 843109484
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P100_10_ON",
+    "broadcast_scope": "NEIGHBORS_ONLY",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5471.410196078431,
+      "median": 5527.0,
+      "stdev": 967.4409998777037,
+      "min": 0,
+      "max": 9053
+    },
+    "network_efficiency": {
+      "mean": 0.1769828285337055,
+      "median": 0.17978235044001828,
+      "stdev": 0.03120639586423545,
+      "min": 0,
+      "max": 0.26215993404781535
+    },
+    "traffic": {
+      "valid_count": 50,
+      "send": {
+        "avg": {
+          "mean": 357231571.22,
+          "median": 366187070.5,
+          "stdev": 45377876.44434946,
+          "min": 95790349,
+          "max": 396405945
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 144009113.06,
+          "median": 145544969.5,
+          "stdev": 10674470.15336748,
+          "min": 76689886,
+          "max": 153934938
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 492931870.74,
+          "median": 501882268.5,
+          "stdev": 54083407.5085805,
+          "min": 170498118,
+          "max": 543767194
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P100_10_ON",
+    "broadcast_scope": "REQUEST_BASED",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5472.176862745098,
+      "median": 5512.5,
+      "stdev": 969.0710826025538,
+      "min": 0,
+      "max": 9880
+    },
+    "network_efficiency": {
+      "mean": 0.1770332839992145,
+      "median": 0.18030124971420794,
+      "stdev": 0.03088183838106442,
+      "min": 0,
+      "max": 0.2510924369747899
+    },
+    "traffic": {
+      "valid_count": 11,
+      "send": {
+        "avg": {
+          "mean": 115204688.18181819,
+          "median": 37061413,
+          "stdev": 220139630.1053223,
+          "min": 2322936,
+          "max": 765284128
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 56968657.45454545,
+          "median": 37213929,
+          "stdev": 50792337.51803588,
+          "min": 2322936,
+          "max": 166416160
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 171701857.8181818,
+          "median": 73820285,
+          "stdev": 264319501.12612396,
+          "min": 4645873,
+          "max": 931700289
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P100_50_ON",
+    "broadcast_scope": "NEIGHBORS_ONLY",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5481.520784313726,
+      "median": 5503.0,
+      "stdev": 971.530427963619,
+      "min": 0,
+      "max": 9589
+    },
+    "network_efficiency": {
+      "mean": 0.17676238956878818,
+      "median": 0.18044027426921688,
+      "stdev": 0.031042453277392478,
+      "min": 0,
+      "max": 0.26155391828533153
+    },
+    "traffic": {
+      "valid_count": 37,
+      "send": {
+        "avg": {
+          "mean": 305085255.7567568,
+          "median": 350664411,
+          "stdev": 87845583.22943898,
+          "min": 100700443,
+          "max": 402345379
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 137915793.3783784,
+          "median": 143496641,
+          "stdev": 17872668.272525985,
+          "min": 82433619,
+          "max": 160348114
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 436370607.3513514,
+          "median": 478614538,
+          "stdev": 101441582.82267268,
+          "min": 181537726,
+          "max": 552117969
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P100_50_ON",
+    "broadcast_scope": "REQUEST_BASED",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5488.1513725490195,
+      "median": 5534.0,
+      "stdev": 965.3055768190579,
+      "min": 0,
+      "max": 9858
+    },
+    "network_efficiency": {
+      "mean": 0.1763771788167193,
+      "median": 0.1795654516071108,
+      "stdev": 0.030777253250952895,
+      "min": 0,
+      "max": 0.2601140374694543
+    },
+    "traffic": {
+      "valid_count": 22,
+      "send": {
+        "avg": {
+          "mean": 195612939.4090909,
+          "median": 114131742.0,
+          "stdev": 204575307.89018127,
+          "min": 2454063,
+          "max": 780009472
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 95480576.31818181,
+          "median": 105344314.0,
+          "stdev": 53770943.99985149,
+          "min": 2471846,
+          "max": 169457891
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 290518127.22727275,
+          "median": 219077048.5,
+          "stdev": 250352231.7712945,
+          "min": 4908127,
+          "max": 949467363
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P100_90_ON",
+    "broadcast_scope": "NEIGHBORS_ONLY",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5485.250980392157,
+      "median": 5523.0,
+      "stdev": 985.1134963920919,
+      "min": 0,
+      "max": 10470
+    },
+    "network_efficiency": {
+      "mean": 0.17683489540230232,
+      "median": 0.17990275526742303,
+      "stdev": 0.031092447325238415,
+      "min": 0,
+      "max": 0.2646687697160883
+    },
+    "traffic": {
+      "valid_count": 12,
+      "send": {
+        "avg": {
+          "mean": 206465682.91666666,
+          "median": 211250721.0,
+          "stdev": 107593613.77403682,
+          "min": 45891315,
+          "max": 362997350
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 112844781,
+          "median": 124931996.5,
+          "stdev": 34933627.66730251,
+          "min": 42281463,
+          "max": 151992791
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 316346838.9166667,
+          "median": 334200253.0,
+          "stdev": 138615084.985851,
+          "min": 87693579,
+          "max": 508302458
+        }
+      }
+    }
+  },
+  {
+    "scenario": "P100_90_ON",
+    "broadcast_scope": "REQUEST_BASED",
+    "run_count": 50,
+    "block_count": 2550,
+    "propagation_time": {
+      "mean": 5492.304705882353,
+      "median": 5522.5,
+      "stdev": 972.7510611703561,
+      "min": 0,
+      "max": 9858
+    },
+    "network_efficiency": {
+      "mean": 0.17633367452454382,
+      "median": 0.18010631184704562,
+      "stdev": 0.030882382358320377,
+      "min": 0,
+      "max": 0.2595019659239843
+    },
+    "traffic": {
+      "valid_count": 12,
+      "send": {
+        "avg": {
+          "mean": 398058062.25,
+          "median": 231418217.0,
+          "stdev": 402436524.81890774,
+          "min": 4851963,
+          "max": 1214627523
+        }
+      },
+      "recv": {
+        "avg": {
+          "mean": 118851024.66666667,
+          "median": 132685117.5,
+          "stdev": 57193785.933142714,
+          "min": 4823754,
+          "max": 185455449
+        }
+      },
+      "total": {
+        "avg": {
+          "mean": 516564280.4166667,
+          "median": 364103335.5,
+          "stdev": 450350677.10041267,
+          "min": 9591742,
+          "max": 1399366928
+        }
+      }
+    }
+  }
+]

@@ -38,12 +38,18 @@ public class FutureContextSharingManager {
   private final Map<Long, Boolean> waitingForSharedContext = new ConcurrentHashMap<>();
   private final Map<Long, Long> waitingStartTime = new ConcurrentHashMap<>();
 
+  // 要求ベース共有用のフィールド
+  private final Map<Long, Set<Node>> pendingRequests = new ConcurrentHashMap<>(); // ブロックインデックス -> 要求元ノードのセット
+  private Node preferredHighNode = null; // 優先的に要求を送る高速ノード（低速ノード側）
+  private final Map<Long, Set<Node>> requestingLowNodesByBlock = new ConcurrentHashMap<>(); // ブロックインデックス -> 要求してきた低速ノードのセット（高速ノード側、ブロックインデックスごとに管理）
+
   /** ブロードキャスト範囲の列挙 */
   public enum BroadcastScope {
     NEIGHBORS_ONLY, // 隣接ノードのみ
     SLOW_NODES_ONLY, // 低速ノードのみ
     ALL_NODES, // 全ノード
-    CUSTOM_RANGE // カスタム範囲（環境変数で指定）
+    CUSTOM_RANGE, // カスタム範囲（環境変数で指定）
+    REQUEST_BASED // 要求ベース共有（新規追加）
   }
 
   /** ノードタイプの列挙 */
@@ -272,6 +278,8 @@ public class FutureContextSharingManager {
             return BroadcastScope.ALL_NODES;
           case "CUSTOM_RANGE":
             return BroadcastScope.CUSTOM_RANGE;
+          case "REQUEST_BASED":  // 新規追加
+            return BroadcastScope.REQUEST_BASED;
           default:
             System.err.println(
                 "Warning: Invalid BROADCAST_SCOPE value: "
@@ -321,8 +329,41 @@ public class FutureContextSharingManager {
       return;
     }
 
-    // Forerunner低速ノードは未来コンテキスト生成を行わず、共有を待機
+    // Forerunner低速ノードの処理
     if (nodeType == NodeType.FORERUNNER_LOW) {
+      // REQUEST_BASEDの場合、初回要求を送信
+      if (broadcastScope == BroadcastScope.REQUEST_BASED) {
+        Block currentBlock = ownerNode.getBlock();
+        if (currentBlock != null) {
+          long nextBlockIndex = currentBlock.getIndex() + 1;
+          // 既に未来コンテキストを持っている場合は要求しない
+          if (!localContexts.containsKey(nextBlockIndex) && 
+              !sharedContexts.containsKey(nextBlockIndex)) {
+            // 待機中でない場合のみ初回要求を送信（記憶方式により、再要求は不要）
+            // ただし、隣接ノードにForerunner適用ノードがない場合は要求を送信しない
+            if (!waitingForSharedContext.containsKey(nextBlockIndex)) {
+              // 隣接ノードにForerunner適用ノードがあるか確認
+              List<Node> adjacentForerunnerNodes = getAdjacentForerunnerNodes();
+              Node preferredHigh = selectPreferredHighNode();
+              
+              // 隣接ノードにForerunner適用ノードがある場合のみ要求を送信
+              if (preferredHigh != null || !adjacentForerunnerNodes.isEmpty()) {
+                requestFutureContext(nextBlockIndex);
+              }
+              // 隣接ノードにForerunner適用ノードがない場合は要求を送信しない
+              // （未来コンテキストなしで通常処理を続行）
+            }
+          } else {
+            // 既にコンテキストを持っている場合、待機状態を終了
+            if (waitingForSharedContext.containsKey(nextBlockIndex)) {
+              stopWaitingForSharedContext(nextBlockIndex);
+            }
+          }
+        }
+        return;
+      }
+      
+      // REQUEST_BASED以外の場合は既存の動作（待機）
       simblock.util.DebugLogger.diagLog(
           "onTxPoolUpdate: Node " + ownerNode.getNodeID() + " is FORERUNNER_LOW, waiting");
       startWaitingForSharedContext();
@@ -494,6 +535,24 @@ public class FutureContextSharingManager {
       simblock.util.DebugLogger.diagLog("share skipped: sharingEnabled=false");
       return; // 共有無効時は何もしない（ローカルのみ保持）
     }
+
+    // REQUEST_BASEDの場合は要求ベースの送信
+    if (broadcastScope == BroadcastScope.REQUEST_BASED) {
+      // レート制限（共有嵐の抑制）- 要求ベースの送信でもレート制限を適用
+      long now = System.currentTimeMillis();
+      if (now - lastShareEpochMs < minShareIntervalMs) {
+        return;
+      }
+      lastShareEpochMs = now;
+      
+      // 共有コンテキストとして保存（既存の動作と同様）
+      sharedContexts.put(context.getBlockIndex(), context);
+      // 要求ベースの送信（要求がある場合のみ送信）
+      shareContextToRequestingNodes(context);
+      return;
+    }
+
+    // 既存のブロードキャスト方式（NEIGHBORS_ONLY等）
     // レート制限（共有嵐の抑制）
     long now = System.currentTimeMillis();
     if (now - lastShareEpochMs < minShareIntervalMs) {
@@ -603,7 +662,7 @@ public class FutureContextSharingManager {
       return;
     }
 
-    // 待機中の低速ノードの場合、待機を終了
+    // 待機中の低速ノードの場合、待機を終了（REQUEST_BASEDの場合も含む）
     if (waitingForSharedContext.containsKey(blockIndex)
         && waitingForSharedContext.get(blockIndex)) {
       stopWaitingForSharedContext(blockIndex);
@@ -621,6 +680,20 @@ public class FutureContextSharingManager {
     } else {
       // 新しいコンテキストとして保存
       saveNewContext(context, blockIndex);
+    }
+    
+    // REQUEST_BASEDの場合、低速ノードが受信した後、他の低速ノードからの要求に応じて送信可能にする
+    if (broadcastScope == BroadcastScope.REQUEST_BASED && 
+        nodeType == NodeType.FORERUNNER_LOW) {
+      // 受信したコンテキストをローカルコンテキストとしても保存（要求に応じて送信可能にするため）
+      // 既に`saveNewContext()`または`adoptReceivedContext()`で保存されている可能性があるが、
+      // 念のため確認して保存
+      if (!localContexts.containsKey(blockIndex)) {
+        localContexts.put(blockIndex, context);
+      }
+      
+      // 【重要】他の低速ノードからの要求に応じて送信（要求がある場合のみ）
+      shareContextToRequestingNodes(context);
     }
 
     // 送信ノードの性能評価を更新
@@ -769,6 +842,332 @@ public class FutureContextSharingManager {
     }
 
     return neighbors;
+  }
+
+  /**
+   * 隣接したForerunner適用ノード（高速・低速問わず）を取得
+   */
+  private List<Node> getAdjacentForerunnerNodes() {
+    List<Node> adjacentForerunnerNodes = new ArrayList<>();
+    List<Node> neighbors = getNeighborNodes();
+    
+    for (Node neighbor : neighbors) {
+      if (neighbor instanceof ForerunnerNode) {
+        try {
+          Method getFcsmMethod = neighbor.getClass().getMethod("getFutureContextSharingManager");
+          FutureContextSharingManager neighborFcsm = 
+              (FutureContextSharingManager) getFcsmMethod.invoke(neighbor);
+          
+          if (neighborFcsm != null) {
+            NodeType neighborType = neighborFcsm.getNodeType();
+            // Forerunner適用ノード（高速・低速問わず）を追加
+            if (neighborType == NodeType.FORERUNNER_HIGH || 
+                neighborType == NodeType.FORERUNNER_LOW) {
+              adjacentForerunnerNodes.add(neighbor);
+            }
+          }
+        } catch (Exception e) {
+          // スキップ
+        }
+      }
+    }
+    
+    return adjacentForerunnerNodes;
+  }
+
+  /**
+   * 優先的に要求を送る高速ノードを選択（低速ノード側）
+   */
+  private Node selectPreferredHighNode() {
+    List<Node> adjacentForerunnerNodes = getAdjacentForerunnerNodes();
+    
+    // 高速ノードを優先的に選択
+    for (Node node : adjacentForerunnerNodes) {
+      try {
+        Method getFcsmMethod = node.getClass().getMethod("getFutureContextSharingManager");
+        FutureContextSharingManager neighborFcsm = 
+            (FutureContextSharingManager) getFcsmMethod.invoke(node);
+        
+        if (neighborFcsm != null && 
+            neighborFcsm.getNodeType() == NodeType.FORERUNNER_HIGH) {
+          return node; // 最初に見つかった高速ノードを返す
+        }
+      } catch (Exception e) {
+        // スキップ
+      }
+    }
+    
+    return null; // 高速ノードが見つからない場合はnull
+  }
+
+  /**
+   * 優先高速ノードの有効性を確認
+   */
+  private boolean isPreferredHighNodeValid() {
+    if (preferredHighNode == null) {
+      return false;
+    }
+    
+    // 隣接ノードにpreferredHighNodeが含まれているか確認
+    List<Node> adjacentForerunnerNodes = getAdjacentForerunnerNodes();
+    return adjacentForerunnerNodes.contains(preferredHighNode);
+  }
+
+  /**
+   * 未来コンテキスト共有要求を送信（低速ノード側）
+   * @param blockIndex 要求するブロックインデックス
+   */
+  public void requestFutureContext(long blockIndex) {
+    // REQUEST_BASEDの場合のみ動作
+    if (broadcastScope != BroadcastScope.REQUEST_BASED) {
+      return;
+    }
+    
+    if (nodeType != NodeType.FORERUNNER_LOW) {
+      return; // 低速ノードのみ
+    }
+    
+    // 既に未来コンテキストを持っている場合は要求しない
+    if (localContexts.containsKey(blockIndex) || 
+        sharedContexts.containsKey(blockIndex)) {
+      return;
+    }
+    
+    // 優先高速ノードを選択（初回のみ、または接続が切れた場合）
+    // 有効性を確認してから選択
+    if (preferredHighNode == null || !isPreferredHighNodeValid()) {
+      preferredHighNode = selectPreferredHighNode();
+    }
+    
+    // 【重要】Forerunner適用高速ノードに隣接する場合は高速ノードにのみ要求を送信
+    if (preferredHighNode != null) {
+      sendRequestToNode(preferredHighNode, blockIndex);
+      // 要求を送信した後、待機状態を開始（未来コンテキストの到着を待つ）
+      startWaitingForRequestedContext(blockIndex);
+      return; // 高速ノードに要求を送った場合は終了（低速ノードには要求しない）
+    }
+    
+    // 【重要】高速ノードが見つからない場合、隣接する同様の低速ノード（Forerunner適用低速ノード）に要求を送信
+    List<Node> adjacentForerunnerNodes = getAdjacentForerunnerNodes();
+    boolean requestSent = false;
+    for (Node node : adjacentForerunnerNodes) {
+      try {
+        Method getFcsmMethod = node.getClass().getMethod("getFutureContextSharingManager");
+        FutureContextSharingManager neighborFcsm = 
+            (FutureContextSharingManager) getFcsmMethod.invoke(node);
+        
+        // 隣接するForerunner適用低速ノードにのみ要求を送信
+        if (neighborFcsm != null && 
+            neighborFcsm.getNodeType() == NodeType.FORERUNNER_LOW) {
+          sendRequestToNode(node, blockIndex);
+          requestSent = true;
+        }
+      } catch (Exception e) {
+        // スキップ
+      }
+    }
+    
+    // 【重要】要求を送信できた場合のみ待機状態を開始
+    // 隣接ノードにForerunner適用ノードがない場合は待機状態を開始しない（要求を送信できないため）
+    if (requestSent) {
+      startWaitingForRequestedContext(blockIndex);
+    } else {
+      // 隣接ノードにForerunner適用ノードがない場合、要求を送信できないことを記録
+      markAsNoAdjacentForerunnerNodes(blockIndex);
+    }
+  }
+
+  /**
+   * 特定のノードに要求を送信
+   */
+  private void sendRequestToNode(Node targetNode, long blockIndex) {
+    try {
+      Method getFcsmMethod = targetNode.getClass().getMethod("getFutureContextSharingManager");
+      FutureContextSharingManager targetFcsm = 
+          (FutureContextSharingManager) getFcsmMethod.invoke(targetNode);
+      
+      if (targetFcsm != null) {
+        targetFcsm.receiveFutureContextRequest(blockIndex, ownerNode);
+      }
+    } catch (Exception e) {
+      System.err.println("Warning: Could not send request to node " 
+          + targetNode.getNodeID() + ": " + e.getMessage());
+    }
+  }
+
+  /**
+   * 隣接ノードにForerunner適用ノードがないことを記録（要求を送信できない場合）
+   * @param blockIndex ブロックインデックス
+   */
+  private void markAsNoAdjacentForerunnerNodes(long blockIndex) {
+    // このブロックインデックスに対しては、隣接ノードにForerunner適用ノードがないことを記録
+    // 以後の要求を抑制するため、待機状態を開始しない
+    // （実装としては、特別なマーカーを設定するか、単に待機状態を開始しないことで対応）
+    simblock.util.DebugLogger.diagLog(
+        "no adjacent Forerunner nodes node=" + ownerNode.getNodeID() + ", block=" + blockIndex);
+  }
+
+  /**
+   * 要求した未来コンテキストの待機状態を開始（REQUEST_BASED用）
+   * @param blockIndex 待機するブロックインデックス
+   */
+  private void startWaitingForRequestedContext(long blockIndex) {
+    // 既に待機中または既にコンテキストがある場合はスキップ
+    if (waitingForSharedContext.containsKey(blockIndex)
+        || sharedContexts.containsKey(blockIndex)
+        || localContexts.containsKey(blockIndex)) {
+      return;
+    }
+    
+    // 待機状態を開始（未来コンテキストの到着を待つ）
+    waitingForSharedContext.put(blockIndex, true);
+    waitingStartTime.put(blockIndex, System.currentTimeMillis());
+    
+    simblock.util.DebugLogger.diagLog(
+        "waiting for requested context node=" + ownerNode.getNodeID() + ", block=" + blockIndex);
+  }
+
+  /**
+   * 未来コンテキスト共有要求を受信
+   * @param blockIndex 要求するブロックインデックス
+   * @param requester 要求元ノード
+   */
+  public void receiveFutureContextRequest(long blockIndex, Node requester) {
+    // REQUEST_BASEDの場合のみ動作
+    if (broadcastScope != BroadcastScope.REQUEST_BASED) {
+      return;
+    }
+    
+    // 要求元がForerunner適用ノードか確認
+    if (!(requester instanceof ForerunnerNode)) {
+      return; // Forerunner適用ノードからの要求のみ受け付ける
+    }
+    
+    try {
+      Method getFcsmMethod = requester.getClass().getMethod("getFutureContextSharingManager");
+      FutureContextSharingManager requesterFcsm = 
+          (FutureContextSharingManager) getFcsmMethod.invoke(requester);
+      
+      if (requesterFcsm == null) {
+        return;
+      }
+      
+      NodeType requesterType = requesterFcsm.getNodeType();
+      
+      // 要求元がForerunner適用ノード（高速・低速問わず）か確認
+      if (requesterType != NodeType.FORERUNNER_HIGH && 
+          requesterType != NodeType.FORERUNNER_LOW) {
+        return;
+      }
+      
+      // 【重要】要求を記憶しておき、未来コンテキストが生成されたら自動的に送信する
+      // 未来コンテキストを持っていない場合でも要求を記録する（記憶方式）
+      
+      // 高速ノード側: 要求元をブロックインデックスごとに記録（改善版）
+      if (nodeType == NodeType.FORERUNNER_HIGH) {
+        requestingLowNodesByBlock.computeIfAbsent(blockIndex, k -> ConcurrentHashMap.newKeySet())
+            .add(requester);
+      }
+      
+      // 要求を記録（未来コンテキストを持っていない場合でも記録）
+      pendingRequests.computeIfAbsent(blockIndex, k -> ConcurrentHashMap.newKeySet())
+          .add(requester);
+      
+      // 既に未来コンテキストが生成済みの場合は即座に送信
+      EnhancedFutureContext localContext = localContexts.get(blockIndex);
+      EnhancedFutureContext sharedContext = sharedContexts.get(blockIndex);
+      EnhancedFutureContext context = localContext != null ? localContext : sharedContext;
+      
+      if (context != null) {
+        // 既に生成済みの場合は即座に送信
+        shareContextToRequestingNodes(context);
+      }
+      // 未生成の場合は、未来コンテキスト生成時に`shareContext()`→`shareContextToRequestingNodes()`で自動送信される
+    } catch (Exception e) {
+      System.err.println("Warning: Could not process request from node " 
+          + requester.getNodeID() + ": " + e.getMessage());
+    }
+  }
+
+  /**
+   * 要求元のノードにのみ送信
+   */
+  private void shareContextToRequestingNodes(EnhancedFutureContext context) {
+    // REQUEST_BASEDの場合のみ動作
+    if (broadcastScope != BroadcastScope.REQUEST_BASED) {
+      return;
+    }
+    
+    long blockIndex = context.getBlockIndex();
+    Set<Node> requestingNodes = pendingRequests.getOrDefault(
+        blockIndex, Collections.emptySet());
+    
+    if (requestingNodes.isEmpty()) {
+      return; // 要求がない場合は送信しない
+    }
+    
+    // 要求元のノードにのみ送信
+    for (Node requestingNode : requestingNodes) {
+      // 要求元がForerunner適用ノードか確認
+      if (!(requestingNode instanceof ForerunnerNode)) {
+        continue;
+      }
+      
+      try {
+        Method getFcsmMethod = requestingNode.getClass().getMethod("getFutureContextSharingManager");
+        FutureContextSharingManager requesterFcsm = 
+            (FutureContextSharingManager) getFcsmMethod.invoke(requestingNode);
+        
+        if (requesterFcsm == null) {
+          continue;
+        }
+        
+        NodeType requesterType = requesterFcsm.getNodeType();
+        
+        // 要求元がForerunner適用ノード（高速・低速問わず）か確認
+        if (requesterType != NodeType.FORERUNNER_HIGH && 
+            requesterType != NodeType.FORERUNNER_LOW) {
+          continue;
+        }
+        
+        // 高速ノード側: 要求してきた低速ノードのみに送信（ブロックインデックスごとに管理）
+        if (nodeType == NodeType.FORERUNNER_HIGH) {
+          Set<Node> requestingNodesForBlock = requestingLowNodesByBlock.getOrDefault(
+              blockIndex, Collections.emptySet());
+          if (!requestingNodesForBlock.contains(requestingNode)) {
+            continue; // 要求していないノードには送信しない
+          }
+        }
+        
+        // トラフィックログ: 各送信イベントごとに1回出力
+        simblock.util.DebugLogger.trafficLogSend();
+        // トラフィック量を記録（BLOCK_SIZEを使用）
+        long currentTime = getCurrentTime();
+        long blockSize = simblock.settings.SimulationConfiguration.BLOCK_SIZE;
+        simblock.util.DebugLogger.recordTrafficSend(blockSize, currentTime);
+        
+        // 送信
+        long jitter = 1L + (long) (random.nextDouble() * 4L);
+        ExecutionDelayTask sendTask = new ExecutionDelayTask(ownerNode, jitter) {
+          @Override
+          public void run() {
+            sendContextToNode(context, requestingNode);
+          }
+        };
+        putTask(sendTask);
+      } catch (Exception e) {
+        System.err.println("Warning: Could not send context to requesting node " 
+            + requestingNode.getNodeID() + ": " + e.getMessage());
+      }
+    }
+    
+    // 要求をクリア（送信完了後）
+    pendingRequests.remove(blockIndex);
+    
+    // 高速ノード側: このブロックインデックスに関連する要求元をクリア
+    if (nodeType == NodeType.FORERUNNER_HIGH) {
+      requestingLowNodesByBlock.remove(blockIndex);
+    }
   }
 
   /** ブロードキャスト範囲に応じて対象ノードを取得 */
